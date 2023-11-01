@@ -173,19 +173,6 @@ export const SidebarData = [
     ],
   },
   {
-    title: "Timetable",
-    iconClosed: <RiIcons.RiArrowDownSFill />,
-    iconOpened: <RiIcons.RiArrowUpSFill />,
-
-    subNav: [
-      {
-        title: "Add driver",
-        path: "/teacher-master/add-teacher",
-        cName: "sub-nav",
-      },
-    ],
-  },
-  {
     title: "Syllabus",
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
