@@ -49,10 +49,21 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: "Add Student",
+        title: "Add Student  Directly",
         path: "/teacher-master/add-teacher",
         cName: "sub-nav",
       },
+      {
+        title: "Add Student Application",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+      {
+        title: "Peding Requests",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+
     ],
   },
   {
@@ -62,7 +73,22 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: "Add driver",
+        title: "Add Stops with fees",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+      {
+        title: "Add Vehicles",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+      {
+        title: "Add Driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+      {
+        title: "Locate driver or bus",
         path: "/teacher-master/add-teacher",
         cName: "sub-nav",
       },
