@@ -43,33 +43,198 @@ export const SidebarData = [
     ],
   },
   {
-    title: "Products",
-    path: "/products",
-  },
-  {
-    title: "Team",
-    path: "/team",
-  },
-  {
-    title: "Messages",
-    path: "/messages",
-
+    title: "Student Master",
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
 
     subNav: [
       {
-        title: "Message 1",
-        path: "/messages/message1",
-      },
-      {
-        title: "Message 2",
-        path: "/messages/message2",
+        title: "Add Student",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
       },
     ],
   },
   {
-    title: "Support",
-    path: "/support",
+    title: "Transport Master",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Staff Management",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add staff",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Assigning",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Fee Structures",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Exam Addition",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Staff Attendance",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Timetable",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Timetable",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Syllabus",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Add Events/Holidays",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Statical Reports",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Send Notices",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Expense Adding",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
+  },
+  {
+    title: "Promote Students",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: "Add driver",
+        path: "/teacher-master/add-teacher",
+        cName: "sub-nav",
+      },
+    ],
   },
 ];
