@@ -1,93 +1,136 @@
-import React, { useEffect, useState } from "react";
-import DynamicTable from "../../Components/DynamicTable";
-import AddButton from "../../Components/AddButton";
-import "./AddSubject.css";
-import AddSubjectForm from "./AddSubjectForm";
-import { getSubjectDatabase } from "../../api/subject";
+  import React, { useEffect, useState } from "react";
+  import DynamicTable from "../../Components/DynamicTable";
+  import AddButton from "../../Components/AddButton";
+  import "./AddSubject.css";
+  import { getSubjectFromDatabase ,deleteSubject, getSubjectDatabase, updateSubjectInDatabase } from "../../api/subject";
+  import { Oval } from 'react-loader-spinner';
+import AddOrUpdateSubjectForm from "./AddOrUpdateSubjectForm ";
+  
+  const AddSubject = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [subjectAdded, setSubjectAdded] = useState(false);
+    const [subjectUpdate, setSubjectUpdate] = useState(false);
 
-import { Oval } from 'react-loader-spinner'
+    const [subjectData, setSubjectData] = useState([]); 
+    const [isLoading, setIsLoading] = useState(true);
+    const [dataChanged, setDataChanged] = useState(false);
+    const [docId, setDocId] = useState(null);
 
-const AddSubject = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [subjectAdded, setSubjectAdded] = useState(false);
-  const [subjectData, setSubjectData] = useState([]); // State to hold fetched data
-  const [isLoading, setIsLoading] = useState(true);
+  
+    const fetchData = () => {
+      getSubjectDatabase()
+        .then((data) => {
+          setSubjectData(data);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setIsLoading(false);
+        });
+    };
+  
+    useEffect(() => {
+      fetchData(); // Fetch data initially
+    }, []);
+  
+    if (dataChanged) {
+        fetchData(); // Refetch data when dataChanged is true
+        setDataChanged(false);
+      }
+  
+      
+    const handleAction = async (actionType, documentId) => {
+      
+      if (actionType === 'edit') {
+        console.log('edit ocument with ID:', documentId);
+        setSubjectUpdate(true)
+        setDocId(documentId);
+        console.log(docId);
+        setIsModalOpen(true);
+        
 
-  useEffect(() => {
-    getSubjectDatabase()  
-     .then((data) => {
-        const filteredData = data.map(({ id, ...rest }) => rest);
-        setSubjectData(filteredData);
-        setIsLoading(false);
-
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setIsLoading(false);
-
-      });
-  }, []); 
-
-
-  // Function to open the modal
-  const openModal = () => {
-    console.log("Open modal");
-    setIsModalOpen(true);
-  };
-
-  const handleSubjectAdded = () => {
-    setSubjectAdded(true);
-    setTimeout(() => {
-      setSubjectAdded(false);
-    }, 2000); // Hide the message after 2 seconds
-  };
-
-  return (
-    <div className="mt-4 w-full">
-      <div className="mt-5 max-w-full">
-        <div className="flex justify-around">
-
-          {isLoading ? ( // Display the loader while data is loading
-            <Oval
-              height={80}
-              width={80}
-              color="#343dff"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-              ariaLabel='oval-loading'
-              secondaryColor="#343fff"
-              strokeWidth={2}
-              strokeWidthSecondary={2}
-
-            />
-          ) : (
-            <div className="add-optional-sub-table">
-              <h1 className="h-16 text-center font-bold text-white flex items-center justify-center">
-                Add Subjects
-              </h1>
-              <DynamicTable data={subjectData} rowHeight={100} action={true} />
-              <p className="h-16 text-center font-bold text-white flex items-center justify-center">
-                <AddButton buttonText={"Add subject"} onClickButton={openModal} />
-              </p>
-            </div>
-          )}
+       
+      } else if (actionType === 'delete') {
+        const response =await deleteSubject(documentId);
+        console.log('Delete document with ID:', documentId);
+        if (response.status) {
+          setDataChanged(true);
+        }
+      }
+    };
 
 
-        </div>
+// Function to open the modal
+const openModal = () => {
+  console.log("Open modal");
+  setIsModalOpen(true);
+};
+
+const handleSubjectAdded = () => {
+  setSubjectAdded(true);
+  setTimeout(() => {
+    setSubjectAdded(false);
+    setDataChanged(true);
+  }, 2000); // Hide the message after 2 seconds
+};
+
+const handleSubjectUpdated = () => {
+  setSubjectAdded(true);
+  setTimeout(() => {
+    setSubjectAdded(false);
+    setDataChanged(true);
+  }, 2000); // Hide the message after 2 seconds
+};
+
+return (
+  <div className="mt-4 w-full">
+    <div className="mt-5 max-w-full">
+      <div className="flex justify-around">
+
+        {isLoading ? ( // Display the loader while data is loading
+          <Oval
+            height={80}
+            width={80}
+            color="#343dff"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+            ariaLabel='oval-loading'
+            secondaryColor="#343fff"
+            strokeWidth={2}
+            strokeWidthSecondary={2}
+
+          />
+        ) : (
+          <div className="add-optional-sub-table">
+            <h1 className="h-16 text-center font-bold text-white flex items-center justify-center">
+              Add Subjects
+            </h1>
+            <DynamicTable data={subjectData} rowHeight={100} action={true} handleAction={handleAction} />
+            <p className="h-16 text-center font-bold text-white flex items-center justify-center">
+              <AddButton buttonText={"Add subject"} onClickButton={openModal} />
+            </p>
+          </div>
+        )}
+
+
       </div>
-      <AddSubjectForm
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        handleSubjectAdded={handleSubjectAdded}
-      />
-      {subjectAdded && (
-        <div className="text-green-500 text-center mt-2">
-          Subject has been successfully added!
-        </div>
-      )}
     </div>
-  );
+    <AddOrUpdateSubjectForm
+      isModalOpen={isModalOpen}
+      setIsModalOpen={setIsModalOpen}
+      handleSubjectAdded={handleSubjectAdded}
+      handleSubjectUpdated={handleSubjectUpdated}
+      subjectAutoGeneratedId={docId}
+      isUpdateOn={subjectUpdate}
+    />
+    {subjectAdded && (
+      <div className="text-green-500 text-center mt-2">
+        Subject has been successfully added!
+      </div>
+    )}
+  </div>
+);
 };
 
 export default AddSubject;
