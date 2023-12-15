@@ -4,24 +4,17 @@ import AddButton from "../../Components/AddButton";
 import { Oval } from 'react-loader-spinner';
 import { addClassAndSectionsToDatabase, deleteClassAndSectionsData, getClassAndSectionsDatabase } from "../../api/ClassMaster/AddClassAndSection";
 import AddOrUpdateClassAndSectionForm from "./AddOrUpdateClassAndSectionForm ";
+import AlertComponent from "../../Components/AlertComponent";
 
 const AddClassAndSubject = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [subjectAdded, setSubjectAdded] = useState(false);
   const [subjectUpdate, setSubjectUpdate] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   const [subjectData, setSubjectData] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
   const [dataChanged, setDataChanged] = useState(false);
   const [docId, setDocId] = useState(null);
-
-  const data = {//temp data to add
-    "className": "7",
-    "noOfSections": 2,
-    "optionalSubjects": ["Sanskrit", "Music","Art"],
-    "subjects": ["Science", "Physics", "Biology"]
-  }
-  
 
   const fetchData = () => {
     getClassAndSectionsDatabase()
@@ -55,14 +48,28 @@ const AddClassAndSubject = () => {
       setIsModalOpen(true);
      
     } else if (actionType === 'delete') {
-      const response =await deleteClassAndSectionsData(documentId);
-      console.log('Delete document with ID:', documentId);
-      if (response.status) {
-        setDataChanged(true);
-      }
+      setShowDeleteAlert(true);
+      setDocId(documentId);
     }
   };
 
+
+  const onConfirm = async ()=>{
+    console.log("handle delete");
+    const response = await deleteClassAndSectionsData(docId);
+    console.log("Delete document with ID:", docId);
+    if (response.status) {
+      setDataChanged(true);
+      setDocId(null);
+      setShowDeleteAlert(false);
+  }
+}
+
+const onCancel = () => {
+  setDocId(null);
+  setShowDeleteAlert(false);
+
+};
 
 // Function to open the modal
 const openModal = () => {
@@ -105,11 +112,11 @@ return (
       ) : (
         <div className="add-optional-sub-table">
           <h1 className="h-16 text-center font-bold text-white flex items-center justify-center">
-            Add Subjects
+          Add Classes
           </h1>
           <DynamicTable data={subjectData} rowHeight={100} action={true} handleAction={handleAction} ispanding={false} />
           <p className="h-16 text-center font-bold text-white flex items-center justify-center">
-            <AddButton buttonText={"Add subject"} onClickButton={openModal} />
+            <AddButton buttonText={"Add Class"} onClickButton={openModal} />
           </p>
         </div>
       )}
@@ -125,7 +132,9 @@ return (
     DocId={docId}
     isUpdateOn={subjectUpdate}
   />
-
+   {showDeleteAlert && (
+        <AlertComponent onConfirm={onConfirm} onCancel={onCancel} />
+      )}
 </div>
 )};
 

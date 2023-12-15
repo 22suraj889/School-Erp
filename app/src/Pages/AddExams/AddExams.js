@@ -1,29 +1,25 @@
-import React, { useState, useEffect } from "react";
-import Modal from "../../Components/Modal";
-import Alert from "@mui/material/Alert";
-import { Oval } from "react-loader-spinner";
-import {
-  addVehicleDataToDb,
-  deleteVehicleData,
-  getVehicleDataFromDatabase,
-} from "../../api/TransportMaster/AddVehicle";
+import React, { useEffect, useState } from "react";
 import DynamicTable from "../../Components/DynamicTable";
 import AddButton from "../../Components/AddButton";
-import AddVehicleForm from "./AdOrUpdateVehicleForm";
+import { Oval } from "react-loader-spinner";
 
-const AddVehicle = () => {
+import AddOrUpdateFeeSlab from "./AddOrUpdateAddExams";
+
+import { deleteExam, getExamsDatabase } from "../../api/ExamAddtion/AddExam";
+
+const AddExam = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [vehicleUpdate, setVehicleUpdate] = useState(false);
+  const [examDataUpdate, setExamDataUpdate] = useState(false);
 
-  const [vehicleData, setVehicleData] = useState([]);
+  const [examData, setExamData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dataChanged, setDataChanged] = useState(false);
   const [docId, setDocId] = useState(null);
 
   const fetchData = () => {
-    getVehicleDataFromDatabase()
+    getExamsDatabase()
       .then((data) => {
-        setVehicleData(data);
+        setExamData(data);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -32,47 +28,48 @@ const AddVehicle = () => {
       });
   };
 
+  useEffect(() => {
+    fetchData(); // Fetch data initially
+    console.log(examData);
+  }, []);
+
+  if (dataChanged) {
+    fetchData(); // Refetch data when dataChanged is true
+    setDataChanged(false);
+  }
+
   const handleAction = async (actionType, documentId) => {
     if (actionType === "edit") {
-      setVehicleUpdate(true);
+      console.log("edit ocument with ID:", documentId);
+      setExamDataUpdate(true);
       setDocId(documentId);
+      console.log(docId);
       setIsModalOpen(true);
     } else if (actionType === "delete") {
-      const response = await deleteVehicleData(documentId);
+      const response = await deleteExam(documentId);
+      console.log("Delete document with ID:", documentId);
       if (response.status) {
         setDataChanged(true);
       }
     }
   };
 
-  useEffect(() => {
-    fetchData(); 
-  }, []);
-
-  if (dataChanged) {
-    fetchData(); 
-    setDataChanged(false);
-  }
-
-  
+  // Function to open the modal
   const openModal = () => {
+    console.log("Open modal");
     setIsModalOpen(true);
-    setDocId(null);
-    setVehicleUpdate(false);
   };
 
-  const handleVehicleAdded = () => {
-    setTimeout(() => {
-      setDataChanged(true);
-    }, 2000); 
+  const handleFeeSlabAdded = () => {
+    setDataChanged(true);
   };
 
-  const handleVehicleUpdated = () => {
-    setVehicleUpdate(true);
+  const handleexamDataUpdated = () => {
+    setExamDataUpdate(true);
     setTimeout(() => {
-      setVehicleUpdate(false);
+      setExamDataUpdate(false);
       setDataChanged(true);
-    }, 2000); // Hide the message after 2 seconds
+    }, 2000);
   };
 
   return (
@@ -95,35 +92,32 @@ const AddVehicle = () => {
           ) : (
             <div className="add-optional-sub-table">
               <h1 className="h-16 text-center font-bold text-white flex items-center justify-center">
-                Add Vehicle
+                Exams
               </h1>
               <DynamicTable
-                data={vehicleData}
+                data={examData}
                 rowHeight={100}
                 action={true}
-                handleAction={handleAction}
                 ispanding={false}
+                handleAction={handleAction}
               />
               <p className="h-16 text-center font-bold text-white flex items-center justify-center">
-                <AddButton
-                  buttonText={"Add Vehicle"}
-                  onClickButton={openModal}
-                />
+                <AddButton buttonText={"Add Exam"} onClickButton={openModal} />
               </p>
             </div>
           )}
         </div>
       </div>
-      <AddVehicleForm
+      <AddOrUpdateFeeSlab
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        handleVehicleAdded={handleVehicleAdded}
-        handleVehicleUpdated={handleVehicleUpdated}
+        handleFeeSlabAdded={handleFeeSlabAdded}
+        handleexamDataUpdated={handleexamDataUpdated}
         DocId={docId}
-        isUpdateOn={vehicleUpdate}
+        isUpdateOn={examDataUpdate}
       />
     </div>
   );
 };
 
-export default AddVehicle;
+export default AddExam;

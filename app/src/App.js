@@ -14,16 +14,17 @@ import AddDriver from "./Pages/AddDriver/AddDriver.js";
 import LocateDriver from "./Pages/LocateDriver/LocateDriver.js";
 import ExpenseAdding from "./Pages/ExprenseAdding/ExpenseAdding.js";
 import AddHoliday from "./Pages/AddHolidays/AddHoliday.js";
-
 import AddStop from "./Pages/AddStopFees/AddOrUpdateStopFees.js";
 import AddFeeSlab from "./Pages/AddFeeSlab/AddFeeSlab.js";
 import AddNoticePage from "./Pages/AddNotice/AddNotice.js";
-import AddVehicle from "./Pages/AddVehicles/AddOrUpdateVehicle.js";
-
-
-
-// import {db} from "./config/firebase";
-// import {getDocs, collection} from "firebase/firestore";
+import SalaryToTeacher from "./Pages/SalaryToTeacher/SalaryToTeacher.js";
+import AddVehicle from "./Pages/AddVehicles/AddVehicle.js";
+import AddNonTeachingStaff from "./Pages/AddNonTeachingStaff/AddNonTeachingStaff.js";
+import SalaryToNonTeachingStaff from "./Pages/SalaryToNonTeachingStaff/SalaryToNonTeachingStaff.js";
+import AddFeeStructure from "./Pages/AddFeeStructure/AddFeeStructure.js";
+import AddTimetable from "./Pages/Timetable/AddTimetable.js";
+import CheckSyllabus from "./Pages/CheckSyllabus/CheckSyllabus.js";
+import AddExams from "./Pages/AddExams/AddExams.js";
 
 const App = () => {
   return (
@@ -91,19 +92,36 @@ const App = () => {
               element={<AddFeeSlab />}
             />
             <Route
-              path="transport-master/add-vehciles"
-              element={<AddVehicle/>}
+              path="/transport-master/add-vehciles"
+              element={<AddVehicle />}
             />
             <Route
               path="/fee-structures/add-fee-structures"
-              element={<ExpenseAdding />}
+              element={<AddFeeStructure />}
             />
             <Route
               path="/send-notice/add-notices"
               element={<AddNoticePage />}
             />
+            <Route
+              path="/staff-management/add-non-teaching-staff"
+              element={<AddNonTeachingStaff />}
+            />
+            <Route
+              path="/staff-management/salary-to-teachers"
+              element={<SalaryToTeacher />}
+            />
+            <Route
+              path="/staff-management/salary-to-non-teaching-staff"
+              element={<SalaryToNonTeachingStaff />}
+            />
+            <Route path="/timetable/add-timetable" element={<AddTimetable />} />
+            <Route
+              path="/syllabus/check-syllabus"
+              element={<CheckSyllabus />}
+            />
+            <Route path="/exam-addition/add-exam" element={<AddExams />} />
           </Routes>
-
         </div>
       </div>
     </BrowserRouter>

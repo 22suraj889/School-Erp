@@ -100,21 +100,18 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: "Add staff",
-        path: "/teacher-master/add-teacher",
+        title: "Add Non Teaching Staff",
+        path: "/staff-management/add-non-teaching-staff",
         cName: "sub-nav",
       },
-    ],
-  },
-  {
-    title: "Assigning",
-    iconClosed: <RiIcons.RiArrowDownSFill />,
-    iconOpened: <RiIcons.RiArrowUpSFill />,
-
-    subNav: [
       {
-        title: "Add driver",
-        path: "/teacher-master/add-teacher",
+        title: "Salary to Teachers",
+        path: "/staff-management/salary-to-teachers",
+        cName: "sub-nav",
+      },
+      {
+        title: "Salary to Non-Teaching Staff",
+        path: "/staff-management/salary-to-non-teaching-staff",
         cName: "sub-nav",
       },
     ],
@@ -144,8 +141,8 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: "Add driver",
-        path: "/teacher-master/add-teacher",
+        title: "Add Exam",
+        path: "/exam-addition/add-exam",
         cName: "sub-nav",
       },
     ],
@@ -170,8 +167,8 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: "Add driver",
-        path: "/teacher-master/add-teacher",
+        title: "Add Timetable",
+        path: "/timetable/add-timetable",
         cName: "sub-nav",
       },
     ],
@@ -183,8 +180,8 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: "Add driver",
-        path: "/teacher-master/add-teacher",
+        title: "Check Syllabus",
+        path: "/syllabus/check-syllabus",
         cName: "sub-nav",
       },
     ],

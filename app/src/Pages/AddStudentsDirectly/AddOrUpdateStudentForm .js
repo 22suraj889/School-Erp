@@ -8,7 +8,10 @@ import {
   getStudentDataFromDd,
   updateStudentDirectlyToDatabase,
 } from "../../api/StudentMaster/AddStudentDirectly";
-import { getOptionalSubjectsName } from "../../api/ClassMaster/AddOptionalSubject";
+import { getAllOptionalSubjectsName } from "../../api/ClassMaster/AddOptionalSubject";
+import { getAllTransportSlabs } from "../../api/TransportMaster/AddStopAndFees";
+import { getAllFeeSlab } from "../../api/FeeStructure/AddFeeSlab";
+import { getAllclassNames } from "../../api/ClassMaster/AddClassAndSection";
 const initialStudentData = {
   studentId: "",
   firstName: "",
@@ -78,23 +81,26 @@ const AddOrUpdateStudentForm = ({
   isModalOpen,
   setIsModalOpen,
   DocId,
-  handleStudentAdded,
   handleStudentUpdated,
 }) => {
   const [studentData, setStudentData] = useState(initialStudentData);
-  const [optionalSubjectsName,setOptionalSubjectsName]=useState([]);
+  const [optionalSubjectsName, setOptionalSubjectsName] = useState([]);
+  const [transportOptions, setTransportOptions] = useState([]);
+  const [classOptions,setClassOptions] = useState([]);
+  const [feeOptions,setFeeOptions] = useState([]);
   const [error, setError] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
   const [activeCom, setActiveCom] = useState(1);
 
-
-  
   useEffect(() => {
     if (isModalOpen && isUpdateOn) {
       // Fetch subject data from Firebase when the modal is opened for update
       getStudentData(DocId);
     }
     getOptionalSubjects();
+    getTransportSlabs();
+    getClasses();
+    getFeeSlabs();
   }, [isModalOpen, isUpdateOn]);
 
   const getStudentData = async (DocId) => {
@@ -109,15 +115,32 @@ const AddOrUpdateStudentForm = ({
     }
   };
 
-
-  const getOptionalSubjects = async() => {
-    await getOptionalSubjectsName()
-     .then((data) => {
+  const getOptionalSubjects = async () => {
+    await getAllOptionalSubjectsName().then((data) => {
       setOptionalSubjectsName(data);
-      console.log("response",optionalSubjectsName);
-  
-    })
-  } 
+    });
+  };
+
+  const getTransportSlabs = async () => {
+    await getAllTransportSlabs().then((data) => {
+      console.log(transportOptions);
+      setTransportOptions(data);
+    });
+  };
+
+  const getClasses = async () => {
+    await getAllclassNames().then((data) => {
+      console.log(classOptions);
+      setClassOptions(data);
+    });
+  };
+
+  const getFeeSlabs = async () => {
+    await getAllFeeSlab().then((data) => {
+      console.log(feeOptions);
+      setFeeOptions(data);
+    });
+  };
 
 
   const handleInputChange = (e) => {
@@ -175,8 +198,8 @@ const AddOrUpdateStudentForm = ({
       optionalSubjects: checked
         ? [...prevStudentData.optionalSubjects, name]
         : prevStudentData.optionalSubjects.filter(
-            (subject) => subject !== name
-          ),
+          (subject) => subject !== name
+        ),
     }));
   };
   const handleInputChange6 = (e) => {
@@ -194,7 +217,10 @@ const AddOrUpdateStudentForm = ({
 
   const handleUpdate = async () => {
     try {
-      const response = await updateStudentDirectlyToDatabase(DocId, studentData);
+      const response = await updateStudentDirectlyToDatabase(
+        DocId,
+        studentData
+      );
 
       setConfirmationMessage(response.message);
 
@@ -202,7 +228,7 @@ const AddOrUpdateStudentForm = ({
         setConfirmationMessage(null);
         setIsModalOpen(false);
         handleStudentUpdated();
-      }, 2000); 
+      }, 2000);
     } catch (error) {
       console.error("Error updating subject data", error);
     }
@@ -210,17 +236,15 @@ const AddOrUpdateStudentForm = ({
 
   const handleAdd = async () => {
     try {
-        const response = await addStudentDirectlyToDatabase(studentData);
-        setConfirmationMessage(response.message);
-         setStudentData(initialStudentData);
-      }
-       catch (error) {
+      const response = await addStudentDirectlyToDatabase(studentData);
+      setConfirmationMessage(response.message);
+      setStudentData(initialStudentData);
+    } catch (error) {
       console.error("Error updating subject data", error);
     }
     setTimeout(() => {
       setConfirmationMessage(null);
-        setIsModalOpen(false);
-        handleStudentAdded();
+      setIsModalOpen(false);
     }, 2000); // Hide the message after 2 seconds
   };
 
@@ -282,7 +306,7 @@ const AddOrUpdateStudentForm = ({
               </div>
               <div>
                 <label className="block text-[18px] font-medium text-[#333333]">
-                                    Transport Slab*
+                  Transport Slab*
                 </label>
                 <select
                   name="transportSlab"
@@ -292,9 +316,11 @@ const AddOrUpdateStudentForm = ({
                   className="mt-1 p-2 block w-[47%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
                   <option value="">--- Select ---</option>
-                  <option value="bus">Bus</option>
-                  <option value="car">Car</option>
-                  <option value="bike">Bike</option>
+                  {transportOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option.charAt(0).toUpperCase() + option.slice(1)}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -337,9 +363,11 @@ const AddOrUpdateStudentForm = ({
                   className="mt-1 p-2 block w-[47%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
                   <option value="">--- Select ---</option>
-                  <option value="bus">Class A</option>
-                  <option value="car">Class B</option>
-                  <option value="bike">Class C</option>
+                  {classOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -354,9 +382,11 @@ const AddOrUpdateStudentForm = ({
                   className="mt-1 p-2 block w-[47%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
                   <option value="">--- Select ---</option>
-                  <option value="bus">Class A</option>
-                  <option value="car">Class B</option>
-                  <option value="bike">Class C</option>
+                  {feeOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -912,9 +942,10 @@ const AddOrUpdateStudentForm = ({
             </div>
           </div>
           <div className="addTeacher-buttons">
-            <button  
+            <button
               type="button"
-              onClick={isUpdateOn ? handleUpdate : handleAdd}>
+              onClick={isUpdateOn ? handleUpdate : handleAdd}
+            >
               {isUpdateOn ? "Update" : "Add"}
             </button>
             <button

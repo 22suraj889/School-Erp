@@ -5,6 +5,8 @@ import "./AddStudent.css";
 import { Oval } from "react-loader-spinner";
 import AddOrUpdateStudentForm from "./AddOrUpdateStudentForm ";
 import { studentDataTest, updateStudentDirectlyToDatabase } from "../../api/StudentMaster/AddStudentDirectly";
+import { addNonTeachingStaffToDb, deleteStaffData, getSpecificStaffDataFromDb, getStaffDataFromDatabase, testStaffData, updateStaffToDatabase } from "../../api/StaffManagement/AddNonTeachingStaff";
+import { getTeacherAndSalaryDataFromDatabase } from "../../api/StaffManagement/SalaryToTeachers";
 
 const AddStudent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,25 +37,22 @@ const AddStudent = () => {
   };
   
   const handleStudentAdded = () => {
-      setDataChanged(true);
   };
 
   const handleStudentUpdated = () => {
     setStudentUpdate(false);
-    setDataChanged(true);
   };
 
   return (
     <div className="mt-4 w-full flex items-center justify-center">
       <div className="mt-5 max-w-full">
         <p className="h-16 text-center font-bold text-white flex items-center justify-center">
-          <AddButton buttonText={"Add subject"} onClickButton={openModal} />
+          <AddButton buttonText={"Add Student"} onClickButton={openModal} />
         </p>
       </div>
       <AddOrUpdateStudentForm
         isModalOpen={isModalOpen} 
         setIsModalOpen={setIsModalOpen}
-        handleStudentAdded={handleStudentAdded}
         handleStudentUpdated={handleStudentUpdated}
         DocId={docId}
         isUpdateOn={studentUpdate}
