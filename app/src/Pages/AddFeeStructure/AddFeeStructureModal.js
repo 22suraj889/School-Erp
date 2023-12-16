@@ -8,6 +8,18 @@ import {
   getSpecificFeeSlabDataFromDb,
   updateFeeSlabToDatabase,
 } from "../../api/FeeStructure/AddFeeSlab";
+import AddButton from "../../Components/AddButton";
+import FeeSlabNamePopUp from "./FeeSlabNamePopup";
+import AddTextField from "../../Components/AddTextField";
+import {
+  addFeeStructure,
+  getSpecificFeeStructure,
+  isDocpresentInDb,
+  slabarrayfromactualdb,
+  updateFeeStructure,
+} from "../../api/FeeStructure/AddFeeStructure";
+import { documentId } from "firebase/firestore";
+import { Oval } from "react-loader-spinner";
 
 const AddOrUpdateFeeSlab = ({
   isUpdateOn,
@@ -17,102 +29,178 @@ const AddOrUpdateFeeSlab = ({
   handleFeeSlabAdded,
   handleFeeSlabUpdated,
 }) => {
-  const inticalData = {
+  const initialData = {
     slabName: "",
-    applicableClasses: [],
-    slabId: "",
-    requirements: "",
+    applicableFees: [],
   };
-  const [feeSlabData, setFeeSlabData] = useState(inticalData);
-  const classes = [
-    "Nursery",
-    "LKG",
-    "UKG",
-    "I",
-    "II",
-    "III",
-    "IV",
-    "V",
-    "VI",
-    "VII",
-    "VIII",
-    "IX",
-    "X",
-    "XI",
-    "XII",
-  ];
+
+  // const feeSlabs = [
+  //   "Regular Fee",
+  //   "Sports quota",
+  //   "Free Quota",
+  //   "Discount Quota",
+  // ];
+
   const [error, setError] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
-
+  const [activeCom, setActiveCom] = useState(1);
+  const [isModalOpen2, setIsModalOpen2] = useState(false);
+  const [newSlabName, setNewSlabName] = useState("");
+  const [trackActiveCom, setTrackActiveCom] = useState(1);
+  const [feeSlabArray, setFeeSlabArray] = useState([]);
+  const [applicationFee, setApppicaiontFee] = useState(0);
+  const [feeStructureData, setFeeStructureData] = useState({});
+  const [feeSlabs, setFeeSlabs] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (isModalOpen && isUpdateOn) {
       getFeeSlabData(DocId);
+
     }
   }, [isModalOpen, isUpdateOn]);
 
   const getFeeSlabData = async (DocId) => {
-    try {
-      const subject = await getSpecificFeeSlabDataFromDb(DocId);
 
-      if (subject) {
-        setFeeSlabData(subject);
+    try {
+      setIsLoading(true);
+      const isDocExsitInDb = await isDocpresentInDb(DocId);
+      console.log(isDocExsitInDb);
+      if (!isDocExsitInDb) {
+        const resArrayFromActualDB = await slabarrayfromactualdb(DocId);
+        console.log(resArrayFromActualDB)
+        setFeeSlabArray(
+          resArrayFromActualDB.map((slabName) => ({ slabName, data: { ...initialData } }))
+        );
       }
+      else {
+        const feeStruct = await getSpecificFeeStructure(DocId);
+        console.log(feeStruct);
+        setApppicaiontFee(feeStruct?.applicationFee);
+        const feeSlabs = Object.keys(feeStruct).filter(
+          (key) => key !== "className" && key !== "applicationFee" && key !== "createdAt"
+        );
+        setFeeSlabArray(
+          feeSlabs.map((slabName) => ({ slabName, data: { ...initialData } }))
+        );
+        const neweStruct = transformDataToArray(feeStruct);
+        console.log(neweStruct);
+        setFeeSlabArray(neweStruct);
+      }
+
+      setIsLoading(true);
     } catch (error) {
-      console.error("Error fetching subject data", error);
+      console.error("Error fetching feeStruct data", error);
+    }
+    finally {
+      setIsLoading(false);
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const transformDataToArray = (originalData) => {
+    const transformedData = [];
 
-    if (type === "checkbox") {
-      // If the input is a checkbox, handle it separately
-      const updatedClasses = checked
-        ? [...(feeSlabData.applicableClasses ?? []), name]
-        : (feeSlabData.applicableClasses ?? []).filter(
-            (className) => className !== name
-          );
+    for (const slabName in originalData) {
+      if (slabName !== 'className' && slabName !== 'applicationFee' && slabName !== 'createdAt') {
+        const slabData = originalData[slabName];
+        const slabObject = {
+          slabName: slabName,
+          data: {
+            applicableFees: [],
+          },
+        };
 
-      setFeeSlabData({
-        ...feeSlabData,
-        applicableClasses: updatedClasses,
-      });
-    } else {
-      // For other input types, handle normally
-      setFeeSlabData({
-        ...feeSlabData,
-        [name]: value,
-      });
+        if (slabData && typeof slabData === 'object' && Object.keys(slabData).length > 0) {
+          for (const key in slabData) {
+            slabObject.data.applicableFees.push({
+              [key]: slabData[key],
+            });
+          }
+        }
+
+        transformedData.push(slabObject);
+      }
     }
+
+    return transformedData;
+  }
+
+
+
+  const handleInputChange = (e, index, classIndex) => {
+    const updatedArray = [...feeSlabArray];
+    const firstKey = Object.keys(
+      feeSlabArray[index].data.applicableFees[classIndex]
+    )[0];
+    feeSlabArray[index].data.applicableFees[classIndex][firstKey] =
+      e.target.value;
+
+    setFeeSlabArray(updatedArray);
+    console.log(updatedArray);
+
+    const transformedData = {
+      className: DocId,
+      applicationFee: applicationFee,
+    };
+
+    updatedArray.forEach((entry) => {
+      const slabName = entry.slabName;
+      const applicableFees = entry.data.applicableFees;
+
+      transformedData[slabName] = {};
+
+      applicableFees.forEach((fee) => {
+        const [key] = Object.keys(fee);
+        transformedData[slabName][key] = fee[key];
+      });
+    });
+
+    console.log(transformedData);
+    setFeeStructureData(transformedData);
+  };
+
+  const handleAddSlab = () => {
+    const activeIndex = activeCom - 1;
+    const updatedArray = [...feeSlabArray];
+    const slabData = updatedArray[activeIndex].data;
+    const newClass = { [newSlabName]: "" };
+
+    slabData.applicableFees = [...(slabData.applicableFees || []), newClass];
+
+    setNewSlabName("");
+    setFeeSlabArray(updatedArray);
+    setIsModalOpen2(false);
+    console.log(updatedArray);
   };
 
   const handleUpdate = async () => {
     try {
-      console.log("pppp");
-      const response = await updateFeeSlabToDatabase(DocId, feeSlabData);
+      const response = await updateFeeStructure(DocId, feeSlabArray);
 
       setConfirmationMessage(response.message);
-      setFeeSlabData(inticalData);
+      setFeeSlabArray(
+        feeSlabs.map((slabName) => ({ slabName, data: { ...initialData } }))
+      );
+
       setTimeout(() => {
         setConfirmationMessage(null);
         setIsModalOpen(false);
         handleFeeSlabUpdated();
       }, 2000);
     } catch (error) {
-      console.error("Error updating subject data", error);
+      console.error("Error updating feeStruct data", error);
     }
   };
 
   const handleAdd = async () => {
     try {
-      const response = await addFeeSlabToDb(feeSlabData);
-
+      const response = await addFeeStructure(feeStructureData);
       setConfirmationMessage(response.message);
+      setApppicaiontFee(0);
 
-      setFeeSlabData(inticalData);
     } catch (error) {
-      console.error("Error updating subject data", error);
+      console.error("Error updating feeStruct data", error);
     }
+
     setTimeout(() => {
       setConfirmationMessage(null);
       setIsModalOpen(false);
@@ -124,110 +212,134 @@ const AddOrUpdateFeeSlab = ({
 
   return (
     <Modal setShowModal={setIsModalOpen}>
-      {error && (
-        <Alert severity="error" style={{ marginBottom: "10px" }}>
-          Fill all the fields
-        </Alert>
-      )}
-
-      <h2 className="text-[20px] font-bold text-left bg-[#333333] text-white addTeacher-header">
-        {isUpdateOn ? "Update Holidays/Event" : "Add Event/Holidays"}
-      </h2>
-      <div className="addTeacher-form">
-        <form>
-          <div className="addTeacher-main-form subject-form">
-            <div className="form-first">
-              <div className="select-form-container">
-                <label className="block text-sm font-medium text-gray-700">
-                  Slab Name*
-                </label>
-                <input
-                  type="text"
-                  name="slabName"
-                  value={feeSlabData.slabName}
-                  onChange={handleInputChange}
-                  className="mt-1 p-2 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
+      {isLoading ? (
+        <Oval
+          height={80}
+          width={80}
+          color="#343dff"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel="oval-loading"
+          secondaryColor="#343fff"
+          strokeWidth={2}
+          strokeWidthSecondary={2}
+        />
+      ) :
+        <>
+          <h2 className="text-[20px] font-bold text-left bg-[#333333] text-white addTeacher-header">
+            {isUpdateOn ? "Add Fee Structure" : "Add Fee Structure"}
+          </h2>
+          <div className="addTeacher-form">
+            <form>
+              <div className="addTeacher-main-form">
+                <div className="form-first">
+                  <div>
+                    <label className="block text-[18px] font-medium text-[#333333]">
+                      Admission Fees*
+                    </label>
+                    <input
+                      type="Number"
+                      name="applicationFee"
+                      value={applicationFee}
+                      onChange={(e) => setApppicaiontFee(e.target.value)}
+                      required
+                      className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="select-form-container">
-                <label className="block text-sm font-medium text-gray-700">
-                  Slab I'd*
-                </label>
-                <input
-                  type="text"
-                  name="slabId"
-                  value={feeSlabData.slabId}
-                  onChange={handleInputChange}
-                  className="mt-1 p-2 block w-[100%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-            </div>
-            <div className="form-first second-form">
-              <div className="select-form-container checkbox-select">
-                <label className="block text-sm font-medium text-gray-700">
-                  Applicable for*
-                </label>
-                <div className="checkbox-container">
-                  {classes.map((subject) => (
-                    <div key={subject} className="checbox-many">
-                      <label className="block text-[15px] font-medium text-[#333333]">
-                        {subject}
-                      </label>
-                      <input
-                        type="checkbox"
-                        name={subject}
-                        checked={feeSlabData.applicableClasses?.includes(
-                          subject
-                        )}
-                        onChange={handleInputChange}
-                        className="mt-1 p-2 w-4 h-4 block w-half"
-                      />
+              <div className="addTeacher-components">
+                <div className="components-name">
+                  {feeSlabArray.map((slab, index) => (
+                    <div
+                      key={index}
+                      onClick={() => {
+                        setActiveCom(index + 1);
+                        setTrackActiveCom(index + 1);
+                      }}
+                      className={activeCom === index + 1 ? "active-component" : ""}
+                    >
+                      {slab.slabName}
                     </div>
                   ))}
                 </div>
+                {feeSlabArray.map((slab, index2) => (
+                  <div
+                    key={index2}
+                    className={
+                      activeCom === index2 + 1
+                        ? "component-card component-card-two"
+                        : "hidden-card"
+                    }
+                  >
+                    {activeCom === index2 + 1 && (
+                      <div className="applicable-classes">
+                        <ul>
+                          {slab.data.applicableFees.map((classObj, classIndex) => (
+                            <li key={classIndex}>
+                              <AddTextField
+                                label={Object.keys(classObj)[0]}
+                                value={Object.values(classObj)[0]}
+                                onChange={(e) => {
+                                  handleInputChange(e, index2, classIndex);
+                                }}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    <AddButton
+                      buttonText={"Add a Slab"}
+                      onClickButton={() => setIsModalOpen2(true)}
+                    />
+                  </div>
+                ))}
               </div>
-              <div className="select-form-container text-area">
-                <label className="block text-sm w-[200px] font-medium text-gray-700">
-                  Requirements*
-                </label>
-                <textarea
-                  rows="4"
-                  type="date"
-                  name="requirements"
-                  value={feeSlabData.requirements}
-                  onChange={handleInputChange}
-                  className="mt-1 p-2 block w-[110%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
+              <div className="add-feeStruct-btn addTeacher-buttons">
+                <button
+                  type="button"
+                  onClick={isUpdateOn ? handleAdd : handleUpdate}
+                  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white "
+                >
+                  {isUpdateOn ? "Add" : "Add"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setApppicaiontFee(0);
+                    setFeeSlabArray(
+                      feeSlabs.map((slabName) => ({
+                        slabName,
+                        data: { ...initialData },
+                      }))
+                    );
+                    setIsModalOpen(false);
+                  }}
+                  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white "
+                >
+                  Close
+                </button>
               </div>
-            </div>
+            </form>
           </div>
-          <div className="add-subject-btn addTeacher-buttons">
-            <button
-              type="button"
-              onClick={isUpdateOn ? handleUpdate : handleAdd}
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white "
-            >
-              {isUpdateOn ? "Update" : "Add"}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setFeeSlabData(inticalData);
-                setIsModalOpen(false);
-              }}
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white "
-            >
-              Close
-            </button>
-          </div>
-        </form>
-      </div>
 
-      {confirmationMessage && (
-        <div className="text-green-500 mt-4 text-center">
-          {confirmationMessage}
-        </div>
-      )}
+          {confirmationMessage && (
+            <div className="text-green-500 mt-4 text-center">
+              {confirmationMessage}
+            </div>
+          )}
+          <FeeSlabNamePopUp
+            isModalOpen2={isModalOpen2}
+            setIsModalOpen2={setIsModalOpen2}
+            newSlabName={newSlabName}
+            setNewSlabName={setNewSlabName}
+            activeCom={trackActiveCom}
+            onAddSlab={handleAddSlab}
+          />
+        </>
+      }
     </Modal>
   );
 };
