@@ -7,16 +7,31 @@ import svgImage from "./add.png";
 import Classes  from "../../Database/Classes";
 
 const SearchDetailsShow = () => {
+  const months = ['January', 'February', 'March'];
+  const data = [
+    { text: 'VII - A - Maths(586)', id: 1 },
+    { text: 'X - B - Maths(586)', id: 2 },
+    { text: 'X - C - Maths(586)', id: 3 },
+  ];  
   const { id } = useParams();
   const location = useLocation();
   const { resultData } = location.state || {};
   const who = location.state?.who || " ";
   const [isChecked1, setIsChecked1] = useState(false);
   const [isChecked2, setIsChecked2] = useState(false);
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-  ];
-
+  const getRandomDate = () => {
+    const start = new Date(2000, 0, 1); // Choose your start date
+    const end = new Date(); // Use the current date as the end date
+    const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    
+    const dd = String(randomDate.getDate()).padStart(2, '0');
+    const mm = String(randomDate.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+    const yyyy = randomDate.getFullYear();
+  
+    return `${dd}-${mm}-${yyyy}`;
+  };
+  
+  const data2 = ['Relative Velocity', 'Velocity', 'Rotational Velocity', 'Speed', 'Speed'];
   const handleToggle1 = () => {
     setIsChecked1(!isChecked1);
   };
@@ -127,18 +142,12 @@ const SearchDetailsShow = () => {
           <br></br>
           <hr></hr>
         <div>
-          <div className="flex">
-                <p className="month">January</p>
-                <button className="pay-button1">Take Fees</button>
-          </div>
-          <div className="flex">
-                <p className="month">February</p>
-                <button className="pay-button1">Take Fees</button>
-          </div>
-          <div className="flex">
-                <p className="month">March</p>
-                <button className="pay-button1 ">Take Fees</button>
-          </div>
+        {months.map((month, index) => (
+        <div key={index} className="flex">
+          <p className="month w-1/5">{month}</p>
+          <button className="pay-button w-4/5">Take Fees</button>
+        </div>
+      ))}
         </div>
         </div>
        </div>
@@ -156,18 +165,12 @@ const SearchDetailsShow = () => {
         <div>
           <br></br>
           <hr></hr>
-          <div className="flex">
-                <p className="month">January</p>
-                <button className="pay-button">Take Fees</button>
-          </div>
-          <div className="flex">
-                <p className="month">February</p>
-                <button className="pay-button">Take Fees</button>
-          </div>
-          <div className="flex">
-                <p className="month">March</p>
-                <button className="pay-button">Take Fees</button>
-          </div>
+          {months.map((month, index) => (
+        <div key={index} className="flex">
+          <p className="month w-1/5">{month}</p>
+          <button className="pay-button w-4/5">Take Fees</button>
+        </div>
+      ))}
         </div>
       </div>
     </div>
@@ -193,37 +196,38 @@ const SearchDetailsShow = () => {
         <div className="exam-section">
           <h3 className="exam">Exam wise Grades</h3>
             <hr></hr>
-            <div className="flex">
-                <p className="month">January</p>
-                <button className="pay-button">Take Fees</button>
-          </div>
-          <div className="flex">
-                <p className="month">February</p>
-                <button className="pay-button">Take Fees</button>
-          </div>
-          <div className="flex">
-                <p className="month">March</p>
-                <button className="pay-button">Take Fees</button>
-          </div>
+            {months.map((month, index) => (
+        <div key={index} className="flex">
+          <p className="month w-1/5">{month}</p>
+          <button className="pay-button w-4/5">Check</button>
+        </div>
+      ))}
          
         </div>
     </div>
    
   </div> )}
    {who !== "student" && (
-  <div className="ExamAttendance">
-      <div className="Fees">
+    <div className="Teacher">
+      <div className="Fees2">
         <div>
           <div className="fees-section2">
+          <div className="flex">
               <h2>Assign Classes</h2>
               <img src={svgImage} alt="SVG Image" />
+            </div>
               <hr></hr>
-              <div>
-                {Classes.map(Classes =>(
-                 <Section value={Classes.text}/>
-                )
-                  )}
-              </div>
+              <br></br>
+              {data.map(item => (
+        <div key={item.id} className="flex items-center">
+          <h1 className="border pl-3 flex-grow">{item.text}</h1>
+          <button
+            className="bg-red-500 text-white px-2 py-1 rounded-full cursor-pointer ml-2 w-1/5"
+          >
+            X
+          </button>
+        </div>
+      ))}
           </div>
        </div>
        <div className="fees-section">
@@ -235,6 +239,12 @@ const SearchDetailsShow = () => {
           <br></br>
           <hr></hr>
           <div className="Month">
+          {data2.map((item, index) => (
+        <div key={index} className="flex items-center">
+          <h1 className="border pl-3 flex-grow">{item}</h1>
+          <span className="pl-3">{getRandomDate()}</span>
+        </div>
+      ))}
           </div>
         </div>
        </div>
@@ -244,15 +254,24 @@ const SearchDetailsShow = () => {
               <hr></hr>
         </div>
         <div>
+        {months.map((month, index) => (
+        <div key={index} className="flex">
+          <p className="month w-1/5">{month}</p>
+          <button className="pay-button w-4/5">Take Fees</button>
+        </div>
+      ))}
+          </div>
+        <div>
           <br></br>
           <hr></hr>
         </div>
       </div>
     </div>
-    </div> )}
+    </div>)}
       </div>
       )}
     </div>
+    
   );
 };
 
