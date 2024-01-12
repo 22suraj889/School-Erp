@@ -217,7 +217,7 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: "Put Attendance",
+        title: "Mark Attendance",
         path: "/staff-attendance/put-attendance",
         cName: "sub-nav",
       },

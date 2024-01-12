@@ -67,7 +67,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
                   Password*
                 </label>
                 <input
-                  type="text"
+                  type="password"
                   name="password"
                   value={loginData.password}
                   onChange={handleInputChange}

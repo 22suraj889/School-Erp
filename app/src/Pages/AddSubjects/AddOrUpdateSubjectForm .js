@@ -26,7 +26,6 @@ const AddOrUpdateSubjectForm = ({
   const [subjectData, setSubjectData] = useState(inticalData);
 
   const [error, setError] = useState(false);
-  const [confirmationMessage, setConfirmationMessage] = useState(null);
 
   useEffect(() => {
     if (isModalOpen && isUpdateOn) {
@@ -59,15 +58,12 @@ const AddOrUpdateSubjectForm = ({
     try {
       const response = await updateSubjectInDatabase(DocId, subjectData);
 
-      setConfirmationMessage(response.message);
       toast.success(response.message);
       setSubjectData(inticalData);
-
-      setTimeout(() => {
-        setConfirmationMessage(null);
-        setIsModalOpen(false);
-        handleSubjectUpdated();
-      }, 2000);
+      
+      setIsModalOpen(false);
+      handleSubjectUpdated();
+    
     } catch (error) {
       console.error("Error updating subject data", error);
     }
@@ -79,18 +75,14 @@ const AddOrUpdateSubjectForm = ({
     } else {
       try {
         const response = await addSubjectToDatabase(subjectData);
-        // Show a confirmation message
-        setConfirmationMessage(response.message);
         toast.success(response.message);
         setSubjectData(inticalData);
+        setIsModalOpen(false);
+        handleSubjectAdded();
+
       } catch (error) {
         console.error("Error updating subject data", error);
       }
-      setTimeout(() => {
-        setConfirmationMessage(null);
-        setIsModalOpen(false);
-        handleSubjectAdded();
-      }, 2000); // Hide the message after 2 seconds
     }
   };
 
@@ -173,12 +165,6 @@ const AddOrUpdateSubjectForm = ({
           </div>
         </form>
       </div>
-
-      {confirmationMessage && (
-        <div className="text-green-500 mt-4 text-center">
-          {confirmationMessage}
-        </div>
-      )}
     </Modal>
   );
 };

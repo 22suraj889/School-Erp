@@ -35,11 +35,11 @@ const AddSubject = () => {
   };
 
   useEffect(() => {
-    fetchData(); // Fetch data initially
+    fetchData();
   }, []);
 
   if (dataChanged) {
-    fetchData(); // Refetch data when dataChanged is true
+    fetchData(); 
     setDataChanged(false);
   }
 
