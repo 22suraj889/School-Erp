@@ -86,9 +86,7 @@ const AddOrUpdateTeacherForm = ({
 
   const [error, setError] = useState(false);
   const [transportOptions, setTransportOptions] = useState([]);
-  const [confirmationMessage, setConfirmationMessage] = useState(null);
   const [activeCom, setActiveCom] = useState(1);
-  const [docIdforUpdate, setDocIdforUpdate] = useState(null);
   const [className, setClassName] = useState([]);
   const [subjectsName, setSubjectsName] = useState([]);
   const [singleClassName, setSingleClassName] = useState("");
@@ -96,7 +94,6 @@ const AddOrUpdateTeacherForm = ({
 
   useEffect(() => {
     if (isModalOpen && isUpdateOn) {
-      // Fetch teacher data from Firebase when the modal is opened for update
 
       getTeacherData(DocId);
     }
@@ -229,35 +226,26 @@ const AddOrUpdateTeacherForm = ({
     try {
       const response = await updateTeacherInDatabase(DocId, teacherData);
 
-      setConfirmationMessage(response.message);
-
+      setIsModalOpen(false);
+      handleTeacherUpdated();
       setTeacherData(inticalteacherData);
       toast.success(response.message);
-      setTimeout(() => {
-        setConfirmationMessage(null);
-        setIsModalOpen(false);
-        handleTeacherUpdated();
-      }, 2000); // Hide the message after 2 seconds
+    
     } catch (error) {
       console.error("Error updating teacher data", error);
     }
   };
 
   const handleAdd = async () => {
-    // console.log(teacherData);
     try {
       const response = await addTeacherToDatabase(teacherData);
       setTeacherData(inticalteacherData);
-      setConfirmationMessage(response.message);
+      setIsModalOpen(false);
+      handleTeacherAdded();
       toast.success(response.message);
     } catch (error) {
       console.error("Error adding teacher data", error);
     }
-    setTimeout(() => {
-      setConfirmationMessage(null);
-      setIsModalOpen(false);
-      handleTeacherAdded();
-    }, 2000);
   };
 
   if (!isModalOpen) return null;
@@ -971,11 +959,6 @@ const AddOrUpdateTeacherForm = ({
           </div>
         </form>
 
-        {confirmationMessage && (
-          <div className="text-green-500 mt-4 text-center">
-            {confirmationMessage}
-          </div>
-        )}
       </div>
     </Modal>
   );

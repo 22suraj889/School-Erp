@@ -25,11 +25,9 @@ const AddOrUpdateOptionalSubjectForm = ({
   });
 
   const [error, setError] = useState(false);
-  const [confirmationMessage, setConfirmationMessage] = useState(null);
 
   useEffect(() => {
     if (isModalOpen && isUpdateOn) {
-      // Fetch subject data from Firebase when the modal is opened for update
       getSubjectData(DocId);
     }
   }, [isModalOpen, isUpdateOn]);
@@ -59,7 +57,6 @@ const AddOrUpdateOptionalSubjectForm = ({
     try {
       const response = await updateOptionalSubjectDatabase(DocId, subjectData);
 
-      setConfirmationMessage(response.message);
 
       setSubjectData({
         subjectTotalMarks: 100,
@@ -67,11 +64,8 @@ const AddOrUpdateOptionalSubjectForm = ({
         subjectCode: "",
       });
       toast.success(response.message);
-      setTimeout(() => {
-        setConfirmationMessage(null);
-        setIsModalOpen(false);
-        handleSubjectUpdated();
-      }, 2000); // Hide the message after 2 seconds
+      setIsModalOpen(false);
+      handleSubjectUpdated();
     } catch (error) {
       console.error("Error updating subject data", error);
     }
@@ -90,18 +84,12 @@ const AddOrUpdateOptionalSubjectForm = ({
           subjectCode: "",
         });
         toast.success(response.message);
-        // Show a confirmation message
-        if (response.status) {
-          setConfirmationMessage(response.message);
-        }
+        setIsModalOpen(false);
+        handleSubjectAdded();
+        
       } catch (error) {
         console.error("Error updating subject data", error);
       }
-      setTimeout(() => {
-        setConfirmationMessage(null);
-        setIsModalOpen(false);
-        handleSubjectAdded();
-      }, 2000); // Hide the message after 2 seconds
     }
   };
 
@@ -184,11 +172,7 @@ const AddOrUpdateOptionalSubjectForm = ({
           </div>
         </form>
       </div>
-      {confirmationMessage && (
-        <div className="text-green-500 mt-4 text-center">
-          {confirmationMessage}
-        </div>
-      )}
+   
     </Modal>
   );
 };
