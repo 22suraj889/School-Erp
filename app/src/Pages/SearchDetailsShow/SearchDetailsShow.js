@@ -19,6 +19,7 @@ const SearchDetailsShow = () => {
   const who = location.state?.who || " ";
   const [isChecked1, setIsChecked1] = useState(false);
   const [isChecked2, setIsChecked2] = useState(false);
+
   const getRandomDate = () => {
     const start = new Date(2000, 0, 1); // Choose your start date
     const end = new Date(); // Use the current date as the end date
@@ -144,7 +145,7 @@ const SearchDetailsShow = () => {
         <div>
         {months.map((month, index) => (
         <div key={index} className="flex">
-          <p className="month w-1/5">{month}</p>
+          <p className="month w-1/2">{month}</p>
           <button className="pay-button w-4/5">Take Fees</button>
         </div>
       ))}
@@ -167,7 +168,7 @@ const SearchDetailsShow = () => {
           <hr></hr>
           {months.map((month, index) => (
         <div key={index} className="flex">
-          <p className="month w-1/5">{month}</p>
+          <p className="month w-1/2">{month}</p>
           <button className="pay-button w-4/5">Take Fees</button>
         </div>
       ))}
@@ -177,10 +178,11 @@ const SearchDetailsShow = () => {
     <div className="marks-section">
         <div className="marks-container">
           <div className="marks-container">
-            <h3 className="downloads-1">Marks Card</h3><button className="option-button">Download</button>
+            <h3 className="downloads-1 ">Marks Card</h3>
+            <button className="option-button ">Download</button>
           </div>
           <div className="marks-container">
-            <h3 className="downloads-1">Hall Ticket</h3><button className="option-button">Download</button>
+            <h3 className="downloads-1 w-2/5">Hall Ticket</h3><button className="option-button w-2/5">Download</button>
           </div>
         </div>
         <div className="marks-container">
@@ -270,6 +272,8 @@ const SearchDetailsShow = () => {
     </div>)}
       </div>
       )}
+      <br></br>
+      <br></br>
     </div>
     
   );
