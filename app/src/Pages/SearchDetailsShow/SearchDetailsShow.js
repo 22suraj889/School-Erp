@@ -5,6 +5,7 @@ import TextNameComponent from "../../Components/TextNameComponent";
 import "./SearchDetails.css";
 import svgImage from "./add.png";
 import Classes  from "../../Database/Classes";
+import download from "./download.png";
 
 const SearchDetailsShow = () => {
   const months = ['January', 'February', 'March'];
@@ -19,6 +20,7 @@ const SearchDetailsShow = () => {
   const who = location.state?.who || " ";
   const [isChecked1, setIsChecked1] = useState(false);
   const [isChecked2, setIsChecked2] = useState(false);
+
   const getRandomDate = () => {
     const start = new Date(2000, 0, 1); // Choose your start date
     const end = new Date(); // Use the current date as the end date
@@ -120,7 +122,11 @@ const SearchDetailsShow = () => {
         <div>
           <div className="fees-section">
             <div className="fees-container">
-              <h3 className="fees-text">Application Fees</h3><button className="option-button">Receipt</button>
+              <h3 className="fees-text">Application Fees</h3>
+              <div className="Adding flex">
+              <img src={download} alt="Downward Arrow" className="arrow-image" />
+              <button className="option-button">Receipt</button>
+              </div>
             </div>
             <div className="fees-container">
               <h3 className="fees-text-2">Admission Fees</h3><button className="pay-button ">Take Fees</button>
@@ -130,12 +136,12 @@ const SearchDetailsShow = () => {
        <div className="fees-section">
         <div className="fees-container">
               <h2 className="Regular-Fees">Regular Fees</h2>
-              <p className="mode">Annually</p>
+              <p className="mode mr-1"> Annually </p>
               <label className="toggle-switch">
                 <input type="checkbox" checked={isChecked1} onChange={handleToggle1} />
                 <span className="slider round"></span>
                 </label>
-              <p className="mode">Monthly</p>
+              <p className="mode ml-1">Monthly</p>
               <hr></hr>
         </div>
         <div>
@@ -144,7 +150,7 @@ const SearchDetailsShow = () => {
         <div>
         {months.map((month, index) => (
         <div key={index} className="flex">
-          <p className="month w-1/5">{month}</p>
+          <p className="month w-1/2">{month}</p>
           <button className="pay-button w-4/5">Take Fees</button>
         </div>
       ))}
@@ -154,12 +160,12 @@ const SearchDetailsShow = () => {
        <div className="fees-section">
         <div className="fees-container">
               <h2 className="Regular-Fees">Transport Fees</h2>
-              <p className="mode">Annually</p>
+              <p className="mode mr-1">Annually</p>
               <label className="toggle-switch">
                 <input type="checkbox" checked={isChecked2} onChange={handleToggle2} />
                 <span className="slider round"></span>
                 </label>
-              <p className="mode">Monthly</p>
+              <p className="mode ml-1">Monthly</p>
               <hr></hr>
         </div>
         <div>
@@ -167,7 +173,7 @@ const SearchDetailsShow = () => {
           <hr></hr>
           {months.map((month, index) => (
         <div key={index} className="flex">
-          <p className="month w-1/5">{month}</p>
+          <p className="month w-1/2">{month}</p>
           <button className="pay-button w-4/5">Take Fees</button>
         </div>
       ))}
@@ -177,18 +183,36 @@ const SearchDetailsShow = () => {
     <div className="marks-section">
         <div className="marks-container">
           <div className="marks-container">
-            <h3 className="downloads-1">Marks Card</h3><button className="option-button">Download</button>
+            <h3 className="downloads-1 ">Marks Card</h3>
+            <div className="hallticket flex">
+            <img src={download} alt="Downward Arrow" className="arrow-image" />
+            <button className="option-button ">Download</button>
+            </div>
           </div>
-          <div className="marks-container">
-            <h3 className="downloads-1">Hall Ticket</h3><button className="option-button">Download</button>
+          <div className="marks-container ml-7">
+            <h3 className="downloads-1">Hall Ticket</h3>
+            <div>
+            <div className="hallticket flex">
+            <img src={download} alt="Downward Arrow" className="arrow-image" />
+            <button className="option-button ">Download</button>
+            </div>
+            </div>
           </div>
         </div>
         <div className="marks-container">
           <div className="marks-container">
-              <h3 className="downloads">Previous year Data</h3><button className="option-button">Download</button>
+              <h3 className="downloads">Previous year Data</h3>
+              <div className="hallticket flex">
+            <img src={download} alt="Downward Arrow" className="arrow-image" />
+            <button className="option-button ">Download</button>
+            </div>
           </div>
-          <div className="marks-container">
-              <h3 className="downloads">No Due Certificate</h3><button className="option-button">Download</button>
+          <div className="marks-container  ml-5">
+              <h3 className="downloads">No Due Certificate</h3>
+              <div className="hallticket flex">
+            <img src={download} alt="Downward Arrow" className="arrow-image" />
+            <button className="option-button ">Download</button>
+            </div>
           </div>
        </div>
     </div>
@@ -220,9 +244,9 @@ const SearchDetailsShow = () => {
               <br></br>
               {data.map(item => (
         <div key={item.id} className="flex items-center">
-          <h1 className="border pl-3 flex-grow">{item.text}</h1>
+          <h1 className="border pl-3 flex-grow mt-1 w-6/7">{item.text}</h1>
           <button
-            className="bg-red-500 text-white px-2 py-1 rounded-full cursor-pointer ml-2 w-1/5"
+            className="red bg-red-500 text-white  rounded-full cursor-pointer ml-2 w-1/7"
           >
             X
           </button>
@@ -270,6 +294,8 @@ const SearchDetailsShow = () => {
     </div>)}
       </div>
       )}
+      <br></br>
+      <br></br>
     </div>
     
   );
