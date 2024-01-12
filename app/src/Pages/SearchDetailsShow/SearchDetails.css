@@ -78,6 +78,10 @@
   margin-left: 50px;
   
 }
+.month{
+  margin-top: 20px;
+  margin-left: 5px;
+}
 
 .fees-container{
   display: flex;
@@ -248,43 +252,44 @@ input:checked + .slider:before {
   text-align: center;
 }
 
-.fees-section2{
+
+/* Teacher */
+
+.Classes{
+  background-color: #ffffff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 5px;
-  margin-top: 5px;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 100px;
-  padding-top: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-.fees-section2 img{
-  height: 50%;
-  width: 20px;
+  margin-right: 2%;
   margin-left: 2%;
 }
 
+.addbutton{
+  width: 25px;
+  margin-right: 5%;
+}
+.Part-1{
+  margin-left: 5%;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  padding-right: 5%;
+}
 
+.Remove{
+  width: 25px;
+  height: 25px;
+  margin-top: 7%;
+  margin-left: 2%;
+}
 
-.pay-button1 {
+.pay-button2{
   background-color: rgba(48, 118, 255, 1);
   color: white;
-  padding: 10px 30px;
+  padding: 5px 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 10px;
-  margin-left: 15px;
-}
-
-.month{
   margin-top: 20px;
-  margin-left: 5px;
 }
 
-.Fees2{
-  display: flex;
-  margin-left: 36px;
-}
+/* timetablecss */
+
