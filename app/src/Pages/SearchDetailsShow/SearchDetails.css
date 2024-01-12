@@ -1,3 +1,4 @@
+/* Search at the top */
 .search-container-details {
   display: flex;
   width: auto;
@@ -37,6 +38,40 @@
   justify-content: space-between;
   gap: 40px;
 }
+/* End */
+
+/* Toggle button code */
+
+.toggle-switch-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #2196F3;
+  transition: 0.4s;
+  border-radius: 17px;
+}
+ /* End */
 
 .Fees{
   display: flex;
@@ -119,35 +154,6 @@
   margin-top: 3px;
 }
 
-.toggle-switch-container {
-  display: flex;
-  justify-content: space-between;
-}
-
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 30px;
-  height: 17px;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #2196F3;
-  transition: 0.4s;
-  border-radius: 17px;
-}
 
 .Adding{
   background-color: rgba(102, 255, 48, 1);
@@ -166,6 +172,7 @@
   padding-right: 27px;
   padding-top: 5px;
   padding-bottom: 5px;
+
 }
 
 .arrow-image{

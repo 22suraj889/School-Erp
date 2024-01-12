@@ -244,9 +244,9 @@ const SearchDetailsShow = () => {
               <br></br>
               {data.map(item => (
         <div key={item.id} className="flex items-center">
-          <h1 className="border pl-3 flex-grow">{item.text}</h1>
+          <h1 className="border pl-3 flex-grow mt-1 w-6/7">{item.text}</h1>
           <button
-            className="bg-red-500 text-white px-2 py-1 rounded-full cursor-pointer ml-2 w-1/5"
+            className="red bg-red-500 text-white  rounded-full cursor-pointer ml-2 w-1/7"
           >
             X
           </button>
