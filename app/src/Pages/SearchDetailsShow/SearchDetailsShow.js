@@ -5,6 +5,7 @@ import TextNameComponent from "../../Components/TextNameComponent";
 import "./SearchDetails.css";
 import svgImage from "./add.png";
 import Classes  from "../../Database/Classes";
+import download from "./download.png";
 
 const SearchDetailsShow = () => {
   const months = ['January', 'February', 'March'];
@@ -121,7 +122,11 @@ const SearchDetailsShow = () => {
         <div>
           <div className="fees-section">
             <div className="fees-container">
-              <h3 className="fees-text">Application Fees</h3><button className="option-button">Receipt</button>
+              <h3 className="fees-text">Application Fees</h3>
+              <div className="Adding flex">
+              <img src={download} alt="Downward Arrow" className="arrow-image" />
+              <button className="option-button">Receipt</button>
+              </div>
             </div>
             <div className="fees-container">
               <h3 className="fees-text-2">Admission Fees</h3><button className="pay-button ">Take Fees</button>
@@ -131,12 +136,12 @@ const SearchDetailsShow = () => {
        <div className="fees-section">
         <div className="fees-container">
               <h2 className="Regular-Fees">Regular Fees</h2>
-              <p className="mode">Annually</p>
+              <p className="mode mr-1"> Annually </p>
               <label className="toggle-switch">
                 <input type="checkbox" checked={isChecked1} onChange={handleToggle1} />
                 <span className="slider round"></span>
                 </label>
-              <p className="mode">Monthly</p>
+              <p className="mode ml-1">Monthly</p>
               <hr></hr>
         </div>
         <div>
@@ -155,12 +160,12 @@ const SearchDetailsShow = () => {
        <div className="fees-section">
         <div className="fees-container">
               <h2 className="Regular-Fees">Transport Fees</h2>
-              <p className="mode">Annually</p>
+              <p className="mode mr-1">Annually</p>
               <label className="toggle-switch">
                 <input type="checkbox" checked={isChecked2} onChange={handleToggle2} />
                 <span className="slider round"></span>
                 </label>
-              <p className="mode">Monthly</p>
+              <p className="mode ml-1">Monthly</p>
               <hr></hr>
         </div>
         <div>
@@ -179,18 +184,35 @@ const SearchDetailsShow = () => {
         <div className="marks-container">
           <div className="marks-container">
             <h3 className="downloads-1 ">Marks Card</h3>
+            <div className="hallticket flex">
+            <img src={download} alt="Downward Arrow" className="arrow-image" />
             <button className="option-button ">Download</button>
+            </div>
           </div>
-          <div className="marks-container">
-            <h3 className="downloads-1 w-2/5">Hall Ticket</h3><button className="option-button w-2/5">Download</button>
+          <div className="marks-container ml-7">
+            <h3 className="downloads-1">Hall Ticket</h3>
+            <div>
+            <div className="hallticket flex">
+            <img src={download} alt="Downward Arrow" className="arrow-image" />
+            <button className="option-button ">Download</button>
+            </div>
+            </div>
           </div>
         </div>
         <div className="marks-container">
           <div className="marks-container">
-              <h3 className="downloads">Previous year Data</h3><button className="option-button">Download</button>
+              <h3 className="downloads">Previous year Data</h3>
+              <div className="hallticket flex">
+            <img src={download} alt="Downward Arrow" className="arrow-image" />
+            <button className="option-button ">Download</button>
+            </div>
           </div>
-          <div className="marks-container">
-              <h3 className="downloads">No Due Certificate</h3><button className="option-button">Download</button>
+          <div className="marks-container  ml-5">
+              <h3 className="downloads">No Due Certificate</h3>
+              <div className="hallticket flex">
+            <img src={download} alt="Downward Arrow" className="arrow-image" />
+            <button className="option-button ">Download</button>
+            </div>
           </div>
        </div>
     </div>
