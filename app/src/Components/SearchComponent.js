@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import debounce from "lodash/debounce";
 import {
   getSpecificTeacherDataFromDd,
@@ -20,11 +20,13 @@ function SearchComponent() {
   const [resultData, setresultData] = useState({});
   const navigate = useNavigate();
 
+  const searchContainerRef = useRef(null);
+
   const debouncedSearch = debounce(async (term) => {
     try {
       const trimmedTerm = term.trim();
       if (trimmedTerm) {
-        const lowercaseTerm = trimmedTerm.toLowerCase(); // Convert searchTerm to lowercase for case-insensitive matching
+        const lowercaseTerm = trimmedTerm.toLowerCase();
         const results = await searchUser(lowercaseTerm);
         setShow(true);
         setSearchResults(results);
@@ -37,16 +39,13 @@ function SearchComponent() {
 
   const handleChange = (event) => {
     const term = event.target.value;
-    console.log(term);
     setSearchTerm(term);
     debouncedSearch(term);
   };
 
   const handleStudentItemClick = async (docId) => {
-    console.log(`Item with id ${docId} clicked!`);
     const response = await getSpecificStudentDataFromDd(docId);
     setresultData(response);
-    console.log(response);
     navigate(`/searchresult/${docId}`, {
       state: { resultData: response, who: "student" },
     });
@@ -55,18 +54,34 @@ function SearchComponent() {
   };
 
   const handleTeacherItemClick = async (docId) => {
-    console.log(`Item with id ${docId} clicked!`);
     const response = await getSpecificTeacherDataFromDd(docId);
     setresultData(response);
-    console.log(response);
     navigate(`/searchresult/${docId}`, {
       state: { resultData: response, who: "teacher" },
     });
     setSearchTerm("");
     setShow(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target)
+      ) {
+        setShow(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="search-container">
+    <div className="search-container" ref={searchContainerRef}>
       <input
         className="text-center py-1 pr-[2.5rem] pl-1 rounded-md"
         type="text"
