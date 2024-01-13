@@ -100,7 +100,6 @@ const Home = () => {
           />
         </div>
         <div className="w-1/4	">
-          <PieGraph data={expenseData} />
         </div>
         <div className="fees">
           <div className="flex items-center justify-center border ">
