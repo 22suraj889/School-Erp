@@ -8,7 +8,9 @@ import ButtonComponent from "./ButtonComponent";
 
 const Navbar = ({ setIsAuthenticated }) => {
   const dropdownRef = useRef(null);
+  const dropdowndetailRef = useRef(null);
   const [showLogout, setShowLogout] = useState(false);
+  const [showDetails, setShowDetails] = useState(false)
   const handleClick = () => {
     setShowLogout(!showLogout);
   };
@@ -19,6 +21,11 @@ const Navbar = ({ setIsAuthenticated }) => {
     setIsAuthenticated(false);
     logoutUser();
   };
+
+  const handleQuery = () => {
+    setShowDetails(!showDetails);
+  }
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -39,6 +46,26 @@ const Navbar = ({ setIsAuthenticated }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside2 = (event) => {
+      if (
+        dropdowndetailRef.current &&
+        !dropdowndetailRef.current.contains(event.target) &&
+        !event.target.closest(".query-bar")
+      ) {
+        setShowDetails(false); 
+      }
+    };
+  
+    // Attach the event listener on mount
+    document.addEventListener("click", handleClickOutside2);
+  
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("click", handleClickOutside2);
+    };
+  }, []);
+
   return (
     <nav className="navbar flex justify-between items-center sticky top-0 z-20 py-2">
       <div className="flex items-center ml-4">
@@ -53,7 +80,7 @@ const Navbar = ({ setIsAuthenticated }) => {
           <option value="2023-2024">2023-2024</option>
           <option value="2022-2023">2022-2023</option>
         </select>
-        <img src="assets/icons/question-icon.png" alt="question" />
+        <img src="assets/icons/question-icon.png" alt="question" className="query-bar cursor-pointer" onClick={handleQuery} />
         <div className="avatar-container">
           <Avatar
             onClick={handleClick}
@@ -77,6 +104,19 @@ const Navbar = ({ setIsAuthenticated }) => {
           </div>
         </div>
       )}
+      {
+        showDetails && (
+          <div
+          ref={dropdowndetailRef}
+          className="flex w-full justify-end h-[150px] logout-dropdown"
+        >
+         <div className="flex gap-2 px-10 py-5 items-center border border-solid border-black">
+            <h3 className="font-[500] text-xl">Email :</h3>
+            <p className="text-lg">chappidisrinivasa1@gmail.com</p>
+          </div> 
+        </div>
+        )
+      }
     </nav>
   );
 };
