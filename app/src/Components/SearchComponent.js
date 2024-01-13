@@ -4,13 +4,11 @@ import {
   getSpecificTeacherDataFromDd,
   searchUser,
 } from "../api/TeacherMaster/AddTeacher";
-import {
-  getSpecificStudentDataFromDd,
-  updateStudentDirectlyToDatabase,
-} from "../api/StudentMaster/AddStudentDirectly";
+import { getSpecificStudentDataFromDd } from "../api/StudentMaster/AddStudentDirectly";
 import "./Navbar.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FaSearch } from "react-icons/fa";
 
 function SearchComponent() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,7 +32,6 @@ function SearchComponent() {
     } catch (error) {
       console.error("Error:", error);
       toast.error("Error Searching data");
-
     }
   }, 100);
 
@@ -71,13 +68,15 @@ function SearchComponent() {
   return (
     <div className="search-container">
       <input
-        className="text-center px-2 py-1 rounded-md"
+        className="text-center py-1 pr-[2.5rem] pl-1 rounded-md"
         type="text"
         placeholder="Search Student/Teacher"
         value={searchTerm}
         onChange={handleChange}
       />
-
+      <div className="search-icon">
+        <FaSearch />
+      </div>
       {show && (
         <div className="search-show">
           <ul>
