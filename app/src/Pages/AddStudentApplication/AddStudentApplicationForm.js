@@ -4,6 +4,7 @@ import Alert from "@mui/material/Alert";
 import "../AddTeacher/AddTeacherForm.css";
 import "./AddStudentApplication.css";
 import { toast } from "react-toastify";
+import { getAllclassNames } from "../../api/ClassMaster/AddClassAndSection";
 import {
   addStudentByApplicationToDatabase,
   getApplicantStudentFromDatabase,
@@ -23,6 +24,19 @@ const AddStudentForm = ({ isModalOpen, setIsModalOpen }) => {
     upitransactionNo: "",
     aadharNo: "",
   });
+
+
+  const getClasses = async () => {
+    await getAllclassNames().then((data) => {
+      console.log(classOptions);
+      setClassOptions(data);
+    });
+  };
+
+  const [classOptions, setClassOptions] = useState([]);
+  useEffect(() => {
+    getClasses();
+  }, [isModalOpen]);
 
   const [error, setError] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
@@ -161,19 +175,24 @@ const AddStudentForm = ({ isModalOpen, setIsModalOpen }) => {
                 </div>
               </div>
               <div className="form-first">
-                <div>
-                  <label className="block text-[18px] font-medium text-[#333333]">
-                    Joining Class*
-                  </label>
-                  <input
-                    type="text"
-                    name="joiningClass"
-                    value={formData.joiningClass}
-                    onChange={handleChange}
-                    required
-                    className="mt-1 p-2 block w-[47%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                </div>
+              <div>
+                <label className="block text-[18px] font-medium text-[#333333]">
+                  Joning Class*
+                </label>
+                <select
+                  name="joiningClass"
+                  onChange={handleChange}
+                  required
+                  className="mt-1 p-2 block w-[47%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="">--- Select ---</option>
+                  {classOptions.map((options) => (
+                    <option key={options} value={options}>
+                      {options}
+                    </option>
+                  ))}
+                </select>
+              </div>
                 <div>
                   <label className="block text-[18px] font-medium text-[#333333]">
                     TC No*
@@ -192,12 +211,12 @@ const AddStudentForm = ({ isModalOpen, setIsModalOpen }) => {
                     Application Fees*
                   </label>
                   <input
-                    type="text"
+                    type="checkbox"
                     name="applicationFees"
                     value={formData.applicationFees}
                     onChange={handleChange}
                     required
-                    className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="mt-2  w-10 h-8 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
                 </div>
                 <div>

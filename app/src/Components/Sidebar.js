@@ -31,7 +31,7 @@ const Sidebar = () => {
       <SidebarNav className="main-sidenavbar">
         <SidebarWrap>
           <div>
-            <img src="assets/images/logo.png" className="w-full" alt="sidebar-icon" />
+            <img src="assets/images/logo.jpeg" className="w-full bg-gray-100 pb-10 pt-5" alt="sidebar-icon" />
           </div>
           {SidebarData.map((item, index) => (
             <div key={index} className="icon-parent" >
