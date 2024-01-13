@@ -34,7 +34,6 @@ import Templates from "./Pages/Templates/Templates.js";
 import Users from "./Pages/Users/Users.js";
 import LoginPage from "./Pages/Auth/LoginPage.js";
 import { UserProvider } from "./Context/UserAuthContext.js";
-import LogoutPage from "./Pages/Auth/LogoutPage.js";
 import VisualizeGraphs from "./Pages/VisualizeGraphs/VisualizeGraphs.js";
 import AssignSections from "./Pages/AssignSections/AssignSections.js";
 import Reports from "./Pages/Reports/Reports.js";
@@ -46,7 +45,9 @@ const App = () => {
     <UserProvider>
       <BrowserRouter>
         <div className="flex flex-col">
-          {isAuthenticated && <Navbar />}
+          {isAuthenticated && (
+            <Navbar setIsAuthenticated={setIsAuthenticated} />
+          )}
           <div className="flex">
             {isAuthenticated && <Sidebar />}
             <Routes>
@@ -182,12 +183,6 @@ const App = () => {
                   <Route
                     path="/reports-allocation/reports"
                     element={<Reports />}
-                  />
-                  <Route
-                    path="/logout"
-                    element={
-                      <LogoutPage setIsAuthenticated={setIsAuthenticated} />
-                    }
                   />
                 </>
               )}
