@@ -43,46 +43,38 @@ const LoginPage = ({ setIsAuthenticated }) => {
   };
 
   return (
-    <div className="flex w-full h-[100vh] justify-center items-center">
+    <div className="flex w-full h-[100vh] justify-center items-center login-background">
       <div className="login-container">
-        <h3>Login</h3>
         <form>
-          <div className="addTeacher-main-form">
-            <div className="form-first">
-              <div>
-                <label className="block text-[18px] font-medium text-[#333333]">
-                  Username*
-                </label>
-                <input
-                  type="text"
-                  name="userName"
-                  value={loginData.userName}
-                  onChange={handleInputChange}
-                  required
-                  className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-[18px] font-medium text-[#333333]">
-                  Password*
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={loginData.password}
-                  onChange={handleInputChange}
-                  required
-                  className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
+        <h3>Login Here</h3>
+          <label className="block text-[18px] font-medium text-[#333333]">
+            Username
 
-              <ButtonComponent
-                buttonText={"Login"}
-                onClickButton={handleSubmit}
-                isUpdateDisabled={false}
-              />
-            </div>
-          </div>
+          </label>
+          <input
+            type="text"
+            name="userName"
+            id="username"
+            value={loginData.userName}
+            onChange={handleInputChange}
+            placeholder="John"
+            required
+            className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+          <label className="block text-[18px] font-medium text-[#333333]">
+            Password
+          </label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="******"
+            value={loginData.password}
+            onChange={handleInputChange}
+            required
+            className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+          <div onClick={handleSubmit} className="login-button">Log In</div>
         </form>
       </div>
     </div>

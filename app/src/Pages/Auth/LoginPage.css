@@ -1,29 +1,75 @@
-.login-container {
-  height: auto;
-  width: auto;
-  border: 2px solid #333333;
-  border-radius: 10px;
-  background-color: rgb(247, 240, 240);
+.login-background {
+  animation: changeBackground 12s infinite; /* 8s for 4 images, adjust as needed */
+  background-size: cover;
+  background-repeat: no-repeat;
 }
-.login-container h3 {
+@keyframes changeBackground {
+  0% {
+    background-image: url("https://i.ytimg.com/vi/UFRr2DG8Et4/maxresdefault.jpg");
+  }
+  33% {
+    background-image: url("https://i.ytimg.com/vi/lZ3osKs6yzM/maxresdefault.jpg");
+  }
+  66% {
+    background-image: url("https://scontent-maa2-1.xx.fbcdn.net/v/t39.30808-6/378494402_653016833598311_8174857962356631059_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=783fdb&_nc_ohc=LfQgAUT_d8MAX8sAQJB&_nc_ht=scontent-maa2-1.xx&oh=00_AfDkR_oSu6ky0NPNSg28lgP38YyOmZU1HvRnw_mLsfBcRw&oe=65A769DD");
+  }
+  100% {
+    background-image: url("https://www.admissionindia.net/uploads/colleges/35/about.jpg");
+  }
+}
+form h3 {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 42px;
   text-align: center;
-  background-color: #333333;
-  padding: 15px 0;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
-  color: rgb(247, 240, 240);
-  font-size: 20px;
+  color: white;
 }
-.login-container .addTeacher-main-form {
-  padding: 40px 40px;
+.login-container form {
+  letter-spacing: 0.5px;
+  outline: none;
+  border: none;
+  height: 500px;
+  width: 400px;
+  background-color: rgba(255, 255, 255, 0.13);
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  padding: 50px 35px;
+}
+.login-container .login-button {
+  margin-top: 50px;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: #ffffff;
+  color: #080710;
+  padding: 15px 0;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 5px;
+  cursor: pointer;
 }
-.login-container .addTeacher-main-form .form-first {
-  gap: 20px;
+.login-container form label {
+  display: block;
+  margin-top: 30px;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
 }
-.login-container a {
-  padding: 10px 20px !important;
+.login-container form input{
+  display: block;
+    height: 50px;
+    width: 100%;
+    background-color: rgba(255,255,255,0.07);
+    border-radius: 3px;
+    padding: 0 10px;
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    
 }
