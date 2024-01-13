@@ -34,4 +34,5 @@
 .logout-dropdown div{
   background: white;
     border: 2px solid #333333;
+    border-bottom-left-radius: 20px;
 }
