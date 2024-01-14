@@ -9,6 +9,7 @@ import {
   updateFeeSlabToDatabase,
 } from "../../api/FeeStructure/AddFeeSlab";
 import { getAllclassNames } from "../../api/ClassMaster/AddClassAndSection";
+import { calculateCollectionLength } from "../../api/CountLenghtDb";
 
 const AddOrUpdateFeeSlab = ({
   isUpdateOn,
@@ -24,6 +25,7 @@ const AddOrUpdateFeeSlab = ({
     slabId: "",
     requirements: "",
   };
+  const [slabId, setSlabId] = useState("");
   const [feeSlabData, setFeeSlabData] = useState(inticalData);
   const [error, setError] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
@@ -34,6 +36,7 @@ const AddOrUpdateFeeSlab = ({
       getFeeSlabData(DocId);
     }
     getClasses();
+    getRandomId();
 
   }, [isModalOpen, isUpdateOn]);
 
@@ -43,6 +46,19 @@ const AddOrUpdateFeeSlab = ({
       setClassOptions(data);
     });
   };
+
+  const getRandomId = async()=>{
+    const length = await calculateCollectionLength("AddFeeSlab");
+    console.log("length->",length);
+    if (length === -1) {
+      setSlabId(`Slab${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->",slabId)
+    } else {
+      const formattedId = length + 1 < 10 ? `Slab0${length + 1}` : `Slab00${length + 1}`;
+      setSlabId(formattedId);
+      console.log("idsub->",slabId)
+    }
+  }
 
   const getFeeSlabData = async (DocId) => {
     try {
@@ -98,6 +114,7 @@ const AddOrUpdateFeeSlab = ({
 
   const handleAdd = async () => {
     try {
+      feeSlabData.slabId = slabId;
       const response = await addFeeSlabToDb(feeSlabData);
 
       setConfirmationMessage(response.message);
@@ -149,8 +166,8 @@ const AddOrUpdateFeeSlab = ({
                 <input
                   type="text"
                   name="slabId"
-                  value={feeSlabData.slabId}
-                  onChange={handleInputChange}
+                  value={ isUpdateOn ? feeSlabData.slabId : slabId}
+                  readOnly
                   className="mt-1 p-2 block w-[100%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>

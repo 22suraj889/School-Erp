@@ -13,6 +13,7 @@ import {
   getSubjectsByClassName,
 } from "../../api/ClassMaster/AddClassAndSection";
 import { toast } from "react-toastify";
+import { calculateCollectionLength } from "../../api/CountLenghtDb";
 
 const AddOrUpdateTeacherForm = ({
   isUpdateOn,
@@ -83,7 +84,7 @@ const AddOrUpdateTeacherForm = ({
   };
 
   const [teacherData, setTeacherData] = useState(inticalteacherData);
-
+  const [teacherId,setTeachertId] = useState("")
   const [error, setError] = useState(false);
   const [transportOptions, setTransportOptions] = useState([]);
   const [activeCom, setActiveCom] = useState(1);
@@ -100,6 +101,7 @@ const AddOrUpdateTeacherForm = ({
     getTransportSlabs();
     getClassNames();
     getAllsectionsList();
+    getRandomId();
   }, [isModalOpen, isUpdateOn]);
 
   const getClassNames = async () => {
@@ -107,6 +109,19 @@ const AddOrUpdateTeacherForm = ({
       setClassName(data);
     });
   };
+
+  const getRandomId = async()=>{
+    const length = await calculateCollectionLength("AddTeachers");
+    console.log("length->",length);
+    if (length === -1) {
+      setTeachertId(`T${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->",teacherId)
+    } else {
+      const formattedId = length + 1 < 10 ? `T0${length + 1}` : `T00${length + 1}`;
+      setTeachertId(formattedId);
+      console.log("idsub->",teacherId)
+    }
+  }
 
   const getSubjectNames = async (className) => {
     console.log(className);
@@ -238,6 +253,7 @@ const AddOrUpdateTeacherForm = ({
 
   const handleAdd = async () => {
     try {
+      teacherData.teacherId = teacherId;
       const response = await addTeacherToDatabase(teacherData);
       setTeacherData(inticalteacherData);
       setIsModalOpen(false);
@@ -298,9 +314,8 @@ const AddOrUpdateTeacherForm = ({
                 <input
                   type="text"
                   name="teacherId"
-                  value={teacherData.teacherId}
-                  onChange={handleInputChange}
-                  required
+                  value={isUpdateOn ? teacherData.teacherId : teacherId}
+                  readOnly
                   className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>

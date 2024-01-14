@@ -9,6 +9,7 @@ import {
 } from "../../api/TransportMaster/AddDriver";
 import { getAllVehiclesName } from "../../api/TransportMaster/AddVehicle";
 import { toast } from "react-toastify";
+import { calculateCollectionLength } from "../../api/CountLenghtDb";
 
 
 const initialDriverData = {
@@ -32,6 +33,7 @@ const AddOrUpdateDriverForm = ({
   handleDriverAdded,
   handleDriverUpdated,
 }) => {
+  const [driveId, setDriverId] = useState("");
   const [driverData, setDriverData] = useState(initialDriverData);
   const [error, setError] = useState(false);
   const [allotVechle, SetAllotVechle] = useState([]);
@@ -42,7 +44,21 @@ const AddOrUpdateDriverForm = ({
       getDriverData(DocId);
     }
     getAllVechles();
+    getRandomId();
   }, [isModalOpen, isUpdateOn]);
+
+  const getRandomId = async()=>{
+    const length = await calculateCollectionLength("AddDriver");
+    console.log("length->",length);
+    if (length === -1) {
+      setDriverId(`D${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->",driveId)
+    } else {
+      const formattedId = length + 1 < 10 ? `D0${length + 1}` : `D00${length + 1}`;
+      setDriverId(formattedId);
+      console.log("idsub->",driveId)
+    }
+  }
 
   const getDriverData = async (DocId) => {
     try {
@@ -102,6 +118,7 @@ const AddOrUpdateDriverForm = ({
 
   const handleAdd = async () => {
     try {
+      driverData.driverId = driveId;
       const response = await addDriverDataToDb(driverData);
       toast.success(response.message);
       setDriverData(initialDriverData);
@@ -165,9 +182,8 @@ const AddOrUpdateDriverForm = ({
                 <input
                   type="text"
                   name="driverId"
-                  value={driverData.driverId}
-                  onChange={handleInputChange}
-                  required
+                  value={ isUpdateOn ? driverData.driverId : driveId}
+                  readOnly
                   className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>

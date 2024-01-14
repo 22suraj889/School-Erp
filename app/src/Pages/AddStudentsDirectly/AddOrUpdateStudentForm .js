@@ -13,6 +13,7 @@ import { getAllTransportSlabs } from "../../api/TransportMaster/AddStopAndFees";
 import { getAllFeeSlab } from "../../api/FeeStructure/AddFeeSlab";
 import { getAllclassNames } from "../../api/ClassMaster/AddClassAndSection";
 import { toast } from "react-toastify";
+import { calculateCollectionLength } from "../../api/CountLenghtDb";
 
 const initialStudentData = {
   studentId: "",
@@ -86,6 +87,7 @@ const AddOrUpdateStudentForm = ({
   DocId,
   handleStudentUpdated,
 }) => {
+  const [studentId,setStudentId] = useState("")
   const [studentData, setStudentData] = useState(initialStudentData);
   const [optionalSubjectsName, setOptionalSubjectsName] = useState([]);
   const [transportOptions, setTransportOptions] = useState([]);
@@ -103,6 +105,7 @@ const AddOrUpdateStudentForm = ({
     getTransportSlabs();
     getClasses();
     getFeeSlabs();
+    getRandomId();
   }, [isModalOpen, isUpdateOn]);
 
   const getStudentData = async (DocId) => {
@@ -116,6 +119,19 @@ const AddOrUpdateStudentForm = ({
       console.error("Error fetching subject data", error);
     }
   };
+
+  const getRandomId = async()=>{
+    const length = await calculateCollectionLength("AddStudentsDirectly");
+    console.log("length->",length);
+    if (length === -1) {
+      setStudentId(`S${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->",studentId)
+    } else {
+      const formattedId = length + 1 < 10 ? `S00${length + 1}` : length + 1 < 1000 ? `S0${length + 1}` : `S${length + 1}`;
+      setStudentId(formattedId);
+      console.log("idsub->",studentId)
+    }
+  }
 
   const getOptionalSubjects = async () => {
     await getAllOptionalSubjectsName().then((data) => {
@@ -251,6 +267,7 @@ const AddOrUpdateStudentForm = ({
 
   const handleAdd = async () => {
     try {
+      studentData.studentId = studentId;
       const response = await addStudentDirectlyToDatabase(studentData);
       setConfirmationMessage(response.message);
       setStudentData(initialStudentData);
@@ -314,9 +331,8 @@ const AddOrUpdateStudentForm = ({
                 <input
                   type="text"
                   name="studentId"
-                  value={studentData.studentId}
-                  onChange={handleInputChange}
-                  required
+                  value={ isUpdateOn ? studentData.studentId : studentId}
+                  readOnly
                   className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>

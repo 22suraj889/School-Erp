@@ -35,12 +35,10 @@ const AddOrUpdateSubjectForm = ({
     if (length === -1) {
       setsubjectId(`sub${Math.floor(Math.random() * 900) + 100}`);
       console.log("idsub->",subjectId)
-
     } else {
       const formattedId = length + 1 < 10 ? `sub00${length + 1}` : `sub0${length + 1}`;
       setsubjectId(formattedId);
       console.log("idsub->",subjectId)
-
     }
   }
   
@@ -132,7 +130,7 @@ const AddOrUpdateSubjectForm = ({
               <input
                 type="text"
                 name="subjectCode"
-                value={isUpdateOn?subjectData.subjectCode: subjectId}
+                value={isUpdateOn ? subjectData.subjectCode: subjectId}
                 readOnly
                 className="mt-1 p-2 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />

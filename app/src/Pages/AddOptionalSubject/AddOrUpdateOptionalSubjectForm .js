@@ -9,6 +9,7 @@ import {
 import "./AddOptionalSubject.css";
 import "../AddTeacher/AddTeacherForm.css";
 import { toast } from "react-toastify";
+import { calculateCollectionLength } from "../../api/CountLenghtDb";
 
 const AddOrUpdateOptionalSubjectForm = ({
   isUpdateOn,
@@ -18,10 +19,11 @@ const AddOrUpdateOptionalSubjectForm = ({
   handleSubjectAdded,
   handleSubjectUpdated,
 }) => {
+  const [subjectId,setsubjectId] = useState("")
   const [subjectData, setSubjectData] = useState({
     subjectTotalMarks: 100,
     subjectName: "",
-    subjectCode: "",
+    subjectCode: subjectId,
   });
 
   const [error, setError] = useState(false);
@@ -30,7 +32,22 @@ const AddOrUpdateOptionalSubjectForm = ({
     if (isModalOpen && isUpdateOn) {
       getSubjectData(DocId);
     }
+    getRandomId();
   }, [isModalOpen, isUpdateOn]);
+
+  const getRandomId = async()=>{
+    console.log("hiii");
+    const length = await calculateCollectionLength("AddOptionalSubjects");
+    console.log("length->",length);
+    if (length === -1) {
+      setsubjectId(`sub${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->",subjectId)
+    } else {
+      const formattedId = length + 1 < 10 ? `opsub00${length + 1}` : `opsub0${length + 1}`;
+      setsubjectId(formattedId);
+      console.log("idsub->",subjectId)
+    }
+  }
 
   const getSubjectData = async (DocId) => {
     try {
@@ -72,10 +89,11 @@ const AddOrUpdateOptionalSubjectForm = ({
   };
 
   const handleAdd = async () => {
-    if (!subjectData.subjectCode || !subjectData.subjectName) {
+    if (!subjectData.subjectName) {
       setError(true);
     } else {
       try {
+        subjectData.subjectCode = subjectId;
         const response = await addOptionalSubjectToDatabase(subjectData);
 
         setSubjectData({
@@ -117,8 +135,8 @@ const AddOrUpdateOptionalSubjectForm = ({
               <input
                 type="text"
                 name="subjectCode"
-                value={subjectData.subjectCode}
-                onChange={handleInputChange}
+                readOnly
+                value={isUpdateOn ? subjectData.subjectCode : subjectId}
                 className="mt-1 p-2 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>

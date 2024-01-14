@@ -8,6 +8,7 @@ import {
   updateStaffToDatabase,
 } from "../../api/StaffManagement/AddNonTeachingStaff";
 import { toast } from "react-toastify";
+import { calculateCollectionLength } from "../../api/CountLenghtDb";
 
 const AddorUpdateNonTeachingStaff = ({
   isUpdateOn,
@@ -30,7 +31,7 @@ const AddorUpdateNonTeachingStaff = ({
     dob: null,
   };
   const [staffData, setstaffData] = useState(inticalData);
-
+  const [staffId, setStaffId] = useState("");
   const [error, setError] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
 
@@ -38,6 +39,7 @@ const AddorUpdateNonTeachingStaff = ({
     if (isModalOpen && isUpdateOn) {
       getstaffData(DocId);
     }
+    getRandomId();
   }, [isModalOpen, isUpdateOn]);
 
   const getstaffData = async (DocId) => {
@@ -49,6 +51,20 @@ const AddorUpdateNonTeachingStaff = ({
       }
     } catch (error) {
       console.error("Error fetching subject data", error);
+    }
+  };
+
+  const getRandomId = async () => {
+    const length = await calculateCollectionLength("AddNonTeachingStaff");
+    console.log("length->", length);
+    if (length === -1) {
+      setStaffId(`NS${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->", staffId);
+    } else {
+      const formattedId =
+        length + 1 < 10 ? `NS0${length + 1}` : `NS0${length + 1}`;
+      setStaffId(formattedId);
+      console.log("idsub->", staffId);
     }
   };
 
@@ -80,15 +96,12 @@ const AddorUpdateNonTeachingStaff = ({
       toast.success(response.message);
 
       setstaffData(inticalData);
-
-       
     } catch (error) {
       console.error("Error updating subject data", error);
-    }
-    finally{
+    } finally {
       setIsModalOpen(false);
-     handleNonTeachingstaffUpdated();
-     }
+      handleNonTeachingstaffUpdated();
+    }
   };
 
   const handleAdd = async () => {
@@ -100,22 +113,21 @@ const AddorUpdateNonTeachingStaff = ({
       !staffData.bloodGroup ||
       !staffData.salary ||
       !staffData.dob ||
-      !staffData.staffId ||
       !staffData.role
     ) {
       setError(true);
     } else {
       try {
+        staffData.staffId = staffId;
         const response = await addNonTeachingStaffToDb(staffData);
         toast.success(response.message);
         setstaffData(inticalData);
       } catch (error) {
         console.error("Error updating subject data", error);
+      } finally {
+        setIsModalOpen(false);
+        handleNonStaffAdded();
       }
-     finally{
-       setIsModalOpen(false);
-       handleNonStaffAdded();
-     }
     }
   };
 
@@ -169,9 +181,8 @@ const AddorUpdateNonTeachingStaff = ({
                 <input
                   type="text"
                   name="staffId"
-                  value={staffData.staffId}
-                  onChange={handleInputChange}
-                  required
+                  value={isUpdateOn ? staffData.staffId : staffId}
+                  readOnly
                   className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>

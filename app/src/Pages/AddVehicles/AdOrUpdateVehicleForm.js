@@ -10,6 +10,7 @@ import {
 } from "../../api/TransportMaster/AddVehicle";
 import { getAllTransportSlabs } from "../../api/TransportMaster/AddStopAndFees";
 import { toast } from "react-toastify";
+import { calculateCollectionLength } from "../../api/CountLenghtDb";
 
 const initialVehicleData = {
   vehicleName: "",
@@ -26,6 +27,7 @@ const AddVehicleForm = ({
   handleVehicleAdded,
   handleVehicleUpdated,
 }) => {
+  const [vehicleId, setVehicalId] = useState("");
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
   const [error, setError] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
@@ -39,6 +41,7 @@ const AddVehicleForm = ({
 
     // Fetch stops data from the API
     fetchStopsData();
+    getRandomId();
   }, [isModalOpen, isUpdateOn, DocId]);
 
   const fetchStopsData = async () => {
@@ -46,6 +49,19 @@ const AddVehicleForm = ({
       setStopsList(data);
     });
   };
+
+  const getRandomId = async()=>{
+    const length = await calculateCollectionLength("AddVehicle");
+    console.log("length->",length);
+    if (length === -1) {
+      setVehicalId(`V${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->",vehicleId)
+    } else {
+      const formattedId = length + 1 < 10 ? `V0${length + 1}` : `V00${length + 1}`;
+      setVehicalId(formattedId);
+      console.log("idsub->",vehicleId)
+    }
+  }
 
   const getVehicleData = async (DocId) => {
     try {
@@ -98,8 +114,8 @@ const AddVehicleForm = ({
 
   const handleAdd = async () => {
     try {
+      vehicleData.vehicleId = vehicleId;
       const response = await addVehicleDataToDb(vehicleData);
-
       setConfirmationMessage(response.message);
       setVehicleData(initialVehicleData);
       toast.success(response.message);
@@ -163,9 +179,8 @@ const AddVehicleForm = ({
                 <input
                   type="text"
                   name="vehicleId"
-                  value={vehicleData.vehicleId}
-                  onChange={handleInputChange}
-                  required
+                  value={isUpdateOn ? vehicleData.vehicleId : vehicleId}
+                  readOnly
                   className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>

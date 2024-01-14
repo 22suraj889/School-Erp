@@ -8,6 +8,7 @@ import {
   getSpecificTransportDataFromDb,
 } from "../../api/TransportMaster/AddStopAndFees";
 import { toast } from "react-toastify";
+import { calculateCollectionLength } from "../../api/CountLenghtDb";
 
 const initialStopData = {
   stopName: "",
@@ -23,6 +24,7 @@ const AddOrUpdateStopForm = ({
   handleStopAdded,
   handleStopUpdated,
 }) => {
+  const [stopId, setStopId] = useState("");
   const [stopData, setStopData] = useState(initialStopData);
   const [error, setError] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
@@ -32,7 +34,21 @@ const AddOrUpdateStopForm = ({
       // Fetch stop data from Firebase when the modal is opened for update
       getStopData(DocId);
     }
+    getRandomId();
   }, [isModalOpen, isUpdateOn]);
+
+  const getRandomId = async()=>{
+    const length = await calculateCollectionLength("AddStopAndFees");
+    console.log("length->",length);
+    if (length === -1) {
+      setStopId(`stop${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->",stopId)
+    } else {
+      const formattedId = length + 1 < 10 ? `stop0${length + 1}` : `stop00${length + 1}`;
+      setStopId(formattedId);
+      console.log("idsub->",stopId)
+    }
+  }
 
   const getStopData = async (DocId) => {
     try {
@@ -74,6 +90,7 @@ const AddOrUpdateStopForm = ({
 
   const handleAdd = async () => {
     try {
+      stopData.stopId = stopId;
       const response = await addTransportDataToDb(stopData);
       toast.success(response.message);
       setConfirmationMessage(response.message);
@@ -123,11 +140,10 @@ const AddOrUpdateStopForm = ({
                   Stop ID*
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="stopId"
-                  value={stopData.stopId}
-                  onChange={handleInputChange}
-                  required
+                  value={ isUpdateOn ? stopData.stopId : stopId}
+                  readOnly
                   className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
