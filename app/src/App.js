@@ -120,7 +120,7 @@ const App = () => {
                     element={<AddFeeSlab />}
                   />
                   <Route
-                    path="/transport-master/add-vehciles"
+                    path="/transport-master/add-vehicles"
                     element={<AddVehicle />}
                   />
                   <Route
