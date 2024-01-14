@@ -293,5 +293,51 @@ export const calculateAttendancePercentage = async (options) => {
   };
   
   
+  export const searchStaff = async (searchTerm) => {
+    const staffRef = collection(db, "AddNonTeachingStaff");
+    const teacherRef = collection(db, "AddTeachers");
   
-
+    try {
+      const lowercaseTerm = searchTerm.toLowerCase(); // Convert searchTerm to lowercase for case-insensitive matching
+  
+      // Fetch all student names and IDs
+      const staffQuery = query(staffRef);
+      const staffSnapshot = await getDocs(staffQuery);
+      const students = staffSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        firstName: doc.data().firstName,
+        studentId: doc.data().studentId,
+      }));
+  
+      // Fetch all teacher names and IDs
+      const teacherQuery = query(teacherRef);
+      const teacherSnapshot = await getDocs(teacherQuery);
+      const teachers = teacherSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        firstName: doc.data().firstName,
+        teacherId: doc.data().teacherId,
+      }));
+  
+      // Filter student names based on the search term
+      const filteredStudents = students.filter((student) =>
+        student.firstName.toLowerCase().includes(lowercaseTerm)
+      );
+  
+      // Filter teacher names based on the search term
+      const filteredTeachers = teachers.filter((teacher) =>
+        teacher.firstName.toLowerCase().includes(lowercaseTerm)
+      );
+  
+      // Combine and return the results
+      const searchResults = {
+        students: filteredStudents,
+        teachers: filteredTeachers,
+      };
+  
+      return searchResults;
+    } catch (error) {
+      console.error("Error searching users:", error);
+      throw error;
+    }
+  };
+  

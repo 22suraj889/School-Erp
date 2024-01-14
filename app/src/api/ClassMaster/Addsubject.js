@@ -1,5 +1,5 @@
 import { db } from "../../config/firebase";
-import { doc,getDocs,addDoc, collection,updateDoc,deleteDoc,getDoc, where, query, orderBy, serverTimestamp } from "firebase/firestore";
+import { doc,getDocs,addDoc, collection,updateDoc,deleteDoc,getDoc, where, query, orderBy, serverTimestamp, setDoc } from "firebase/firestore";
 
 /**
  * Add a subject to the database.
@@ -12,15 +12,15 @@ import { doc,getDocs,addDoc, collection,updateDoc,deleteDoc,getDoc, where, query
 export const addSubjectToDatabase = async (subjectData) => {
     const subjectsRef = collection(db, "AddSubjects");
     
-    // Check if subjectCode already exists
     const querySnapshot = await getDocs(query(subjectsRef, where("subjectCode", "==", subjectData.subjectCode)));
     
     if (!querySnapshot.empty) {
         return { status: false, message: "Subject with the same subjectCode already exists" };
     }
-    
+    const subjectDocRef = doc(subjectsRef, subjectData?.subjectCode);
+
     try {
-        await addDoc(subjectsRef, {
+        await setDoc(subjectDocRef, {
             subjectName: subjectData.subjectName,
             subjectTotalMarks: subjectData.subjectTotalMarks,
             subjectCode: subjectData.subjectCode,
@@ -33,6 +33,7 @@ export const addSubjectToDatabase = async (subjectData) => {
         return { status: false, message: "Error adding document" };
     }
 };
+
 
 
 

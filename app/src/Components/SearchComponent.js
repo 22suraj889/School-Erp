@@ -25,7 +25,7 @@ function SearchComponent() {
   const debouncedSearch = debounce(async (term) => {
     try {
       const trimmedTerm = term.trim();
-      if (trimmedTerm) {
+      if (trimmedTerm.length >= 2) {
         const lowercaseTerm = trimmedTerm.toLowerCase();
         const results = await searchUser(lowercaseTerm);
         setShow(true);
@@ -36,6 +36,7 @@ function SearchComponent() {
       toast.error("Error Searching data");
     }
   }, 100);
+
 
   const handleChange = (event) => {
     const term = event.target.value;

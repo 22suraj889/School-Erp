@@ -1,5 +1,5 @@
 import { db } from "../../config/firebase";
-import { doc,getDocs,addDoc, collection,updateDoc,deleteDoc,getDoc, serverTimestamp, query, where, orderBy } from "firebase/firestore";
+import { doc,getDocs,addDoc, collection,updateDoc,deleteDoc,getDoc, serverTimestamp, query, where, orderBy, setDoc } from "firebase/firestore";
 /**
  * Add a subject to the database.
  * @param {Object} optionalSubjectData - An object containing optionalsubject data.
@@ -16,8 +16,11 @@ export const addOptionalSubjectToDatabase = async (optionalSubjectData) => {
         return { status: false, message: "Subject with the same subjectCode already exists" };
     }
 
+    const subjectDocRef = doc(subjectsRef, optionalSubjectData?.subjectCode);
+
+
     try {
-        await addDoc(subjectsRef, {
+        await setDoc(subjectDocRef, {
             subjectName: optionalSubjectData.subjectName,
             subjectTotalMarks:optionalSubjectData.subjectTotalMarks,
             subjectCode: optionalSubjectData.subjectCode,
