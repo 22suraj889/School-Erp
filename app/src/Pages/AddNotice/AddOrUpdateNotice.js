@@ -14,6 +14,7 @@ const AddOrUpdateNoticeForm = ({
 }) => {
   const inticalData = {
     noticeTo: "",
+    noticeSubject: "",
     noticeDescription: "",
   };
   const [noticeData, setNoticeData] = useState(inticalData);
@@ -87,11 +88,23 @@ const AddOrUpdateNoticeForm = ({
                 className="mt-1 p-2 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 <option value="">--- Select ---</option>
-                <option value="Pysics">Pysics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Biology">Biology</option>
-                <option value="Maths">Maths</option>
+                <option value="Teacher">All Teacher</option>
+                <option value="Student">All Student</option>
+                <option value="Teacher&Student">All Teacher&Student</option>
+                <option value="All Class">All Class</option>
               </select>
+            </div>
+            <div className="form-first">
+              <label className="block text-sm font-medium text-gray-700">
+                Notice Subject*
+              </label>
+              <input
+                type="text"
+                name="noticeTo"
+                value={noticeData.noticeSubject}
+                onChange={handleInputChange}
+                className="mt-1 p-2 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
             </div>
             <div className="flex justify-between">
               <label className="block text-sm w-[200px] font-medium text-gray-700">

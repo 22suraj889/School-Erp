@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Oval } from "react-loader-spinner"; // Assuming you are using the Oval component for loading
 import "../Pages/PutAttendance/PutAttendancs.css";
+import { CiSearch } from "react-icons/ci";
+import { CiCircleInfo } from "react-icons/ci";
+
 import {
   getAttendanceList,
   storeStaffAttendance,
@@ -236,7 +239,20 @@ const DatePicker = ({ minDate, maxDate }) => {
           strokeWidthSecondary={2}
         />
       ) : (
+        <div>
+          <div className="flex mt-5 mb-5">
+          <div className="mt-2 mb-2  flex rounded-md bg-gray-900 text-white ml-0 w-1/2">
+          <input
+        className="text-center py-1 ml-4  pl-1 rounded-md bg-gray-900 text-white"
+        type="text"
+        placeholder="Search Teacher"
+      />
+      <CiSearch className="mt-2" />
+          </div>
+          <CiCircleInfo  className="mt-1  w-20 h-8"/>
+          </div>
         <div className="add-optional-sub-table">
+
           <h1 className="h-16 text-center font-bold text-white flex items-center justify-center">
             Add Attendance
           </h1>
@@ -264,6 +280,7 @@ const DatePicker = ({ minDate, maxDate }) => {
               Save Attendence
             </button>
           </p>
+        </div>
         </div>
       )}
     </div>
