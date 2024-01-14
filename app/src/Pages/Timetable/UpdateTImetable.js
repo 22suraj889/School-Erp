@@ -9,6 +9,7 @@ import {
   getSubjectsByClassName,
 } from "../../api/ClassMaster/AddClassAndSection";
 import { FaLock } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const UpdateTimetable = ({
   handleDataChnage,
@@ -80,6 +81,13 @@ const UpdateTimetable = ({
   const handleAdd = async () => {
     try {
       const res = await addTimetable(dataToShow);
+      if(res.status){
+        toast.success(res.message);
+      }
+      if(!res.status){
+        toast.error(res.message);
+      }
+
       console.log(res.message);
     } catch (error) {
       console.error("Error updating subject data", error);

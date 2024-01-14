@@ -294,8 +294,6 @@ export const getStudentListByJoiningClass = async (joiningClass) => {
 export const updateMultipleStudentsSections = async (studentsList) => {
   try {
     const batch = [];
-    console.log("++++++++++++++++++++++++++++");
-    console.log(studentsList);
     
     studentsList.forEach((student) => {
       const { studentId, section } = student;
@@ -306,8 +304,9 @@ export const updateMultipleStudentsSections = async (studentsList) => {
 
     await Promise.all(batch);
 
-    console.log("Students' sections successfully updated!");
-    return { status: true, message: "Students' sections successfully updated" };
+    console.log("Students sections successfully updated!");
+    const res = { status: true, message: "Sections successfully updated" };
+    return res;
   } catch (error) {
     console.error("Error updating students' sections:", error);
     return { status: false, message: "Error updating students' sections" };

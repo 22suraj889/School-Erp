@@ -99,14 +99,21 @@ const AddVehicleForm = ({
     try {
       const response = await updateVehicleDataToDatabase(DocId, vehicleData);
 
-      setConfirmationMessage(response.message);
+      if(response.status) {
+
+
       setVehicleData(initialVehicleData);
       toast.success(response.message);
-      setTimeout(() => {
-        setConfirmationMessage(null);
+
         setIsModalOpen(false);
         handleVehicleUpdated();
-      }, 2000); // Hide the message after 2 seconds
+      }
+      if (!response.status) {
+        setVehicleData(initialVehicleData);
+        setIsModalOpen(false);
+        toast.error(response.message);
+      }
+
     } catch (error) {
       console.error("Error updating vehicle data", error);
     }
@@ -117,16 +124,22 @@ const AddVehicleForm = ({
       vehicleData.vehicleId = vehicleId;
       const response = await addVehicleDataToDb(vehicleData);
       setConfirmationMessage(response.message);
+
+      if (response.status) {
       setVehicleData(initialVehicleData);
       toast.success(response.message);
+      }
+      if (!response.status) {
+        setVehicleData(initialVehicleData);
+        toast.error(response.message);
+      }
     } catch (error) {
       console.error("Error adding vehicle data", error);
     }
-    setTimeout(() => {
       setConfirmationMessage(null);
       setIsModalOpen(false);
       handleVehicleAdded();
-    }, 2000); // Hide the message after 2 seconds
+ // Hide the message after 2 seconds
   };
 
   if (!isModalOpen) return null;

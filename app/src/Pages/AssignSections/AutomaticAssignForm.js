@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "../../Components/Modal";
 import Alert from "@mui/material/Alert";
 import { assignStudentsToSections } from "../../api/StudentMaster/AddStudentDirectly";
+import { toast } from "react-toastify";
 
 
 const AutomaticAssignForm = ({
@@ -47,10 +48,18 @@ const AutomaticAssignForm = ({
         console.log(`Section ${section}: ${inputValue}`);
       });
   
-      await assignStudentsToSections(prevInputValues,listOfStudentsWithoutJoiningSection);
+      const res = await assignStudentsToSections(prevInputValues,listOfStudentsWithoutJoiningSection);
+
+      if(res.status){
+        toast.success(res.message);
+        setDataChanged(true);
+      }
+      if(!res.status){
+        toast.error(res.message);
+        setDataChanged(true);
+      }
   
       console.log(prevInputValues);
-      setDataChanged(true);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error updating subject data", error);

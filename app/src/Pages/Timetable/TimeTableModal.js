@@ -12,6 +12,7 @@ import { FaPlus } from "react-icons/fa";
 import UpdateTimetable from "./UpdateTImetable";
 import AddButton from "../../Components/AddButton";
 import AlertComponent from "../../Components/AlertComponent";
+import { toast } from "react-toastify";
 
 
 function extractSectionCode(section) {
@@ -126,6 +127,12 @@ const TimetableModal = ({ isOpen, closeModal, section }) => {
       subject: subject,
     };
     const res = await deleteTimetableEntry(data);
+    if(res.status){
+    toast.success(res.message);
+    }
+    if(!res.status){
+      toast.error(res.message);
+    }
     console.log(res.message);
 
     console.log(`Delete button clicked for ${day} at ${startTime}-${endTime} for ${subject}`);

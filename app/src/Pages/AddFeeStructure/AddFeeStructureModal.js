@@ -13,7 +13,7 @@ import {
 } from "../../api/FeeStructure/AddFeeStructure";
 import { documentId } from "firebase/firestore";
 import { Oval } from "react-loader-spinner";
-
+import { toast } from "react-toastify";
 const AddOrUpdateFeeSlab = ({
   isUpdateOn,
   isModalOpen,
@@ -149,40 +149,28 @@ const AddOrUpdateFeeSlab = ({
     console.log(updatedArray);
   };
 
-  // const handleUpdate = async () => {
-  //   try {
-  //     const response = await updateFeeStructure(DocId, feeSlabArray);
-
-  //     setConfirmationMessage(response.message);
-  //     setFeeSlabArray(
-  //       feeSlabs.map((slabName) => ({ slabName, data: { ...initialData } }))
-  //     );
-
-  //     setTimeout(() => {
-  //       setConfirmationMessage(null);
-  //       setIsModalOpen(false);
-  //       handleFeeSlabUpdated();
-  //     }, 2000);
-  //   } catch (error) {
-  //     console.error("Error updating feeStruct data", error);
-  //   }
-  // };
-
   const handleAdd = async () => {
     try {
       const response = await addFeeStructure(feeStructureData);
-      setConfirmationMessage(response.message);
+
+      if (response.status) {
       setApppicaiontFee(0);
+      setIsModalOpen(false);
+      handleFeeSlabAdded();
+      toast.success(response.message);
+      }
+      if (!response.status) {
+        setApppicaiontFee(0);
+        setIsModalOpen(false);
+        toast.error(response.message);
+      }
 
     } catch (error) {
       console.error("Error updating feeStruct data", error);
     }
 
-    setTimeout(() => {
-      setConfirmationMessage(null);
-      setIsModalOpen(false);
-      handleFeeSlabAdded();
-    }, 2000);
+  
+  
   };
 
   if (!isModalOpen) return null;
