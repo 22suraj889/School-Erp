@@ -124,10 +124,10 @@ const AddOrUpdateStudentForm = ({
     const length = await calculateCollectionLength("AddStudentsDirectly");
     console.log("length->",length);
     if (length === -1) {
-      setStudentId(`S${Math.floor(Math.random() * 900) + 100}`);
+      setStudentId(`St${Math.floor(Math.random() * 900) + 100}`);
       console.log("idsub->",studentId)
     } else {
-      const formattedId = length + 1 < 10 ? `S00${length + 1}` : length + 1 < 1000 ? `S0${length + 1}` : `S${length + 1}`;
+      const formattedId = length + 1 < 10 ? `St00${length + 1}` : length + 1 < 1000 ? `St0${length + 1}` : `S${length + 1}`;
       setStudentId(formattedId);
       console.log("idsub->",studentId)
     }
