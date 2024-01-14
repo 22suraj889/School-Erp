@@ -1,5 +1,5 @@
 // Sidebar.js
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { SidebarData } from "../Database/SidebarData";
 import { IconContext } from "react-icons/lib";
@@ -28,6 +28,7 @@ const SidebarWrap = styled.div`
 `;
 
 const Sidebar = () => {
+  const [listOfSubMenuOpen, setListOfSubMenuOpen] = useState([]);
   return (
     <IconContext.Provider value={{ color: "#fff" }}>
       <SidebarNav className="main-sidenavbar">
@@ -38,7 +39,7 @@ const Sidebar = () => {
           {SidebarData.map((item, index) => (
             <div key={index} className="icon-parent" >
               {item.custonIcons}
-              <SubMenu item={item} />
+              <SubMenu item={item } listOfSubMenuOpen={listOfSubMenuOpen} setListOfSubMenuOpen={setListOfSubMenuOpen} />
             </div>
           ))}
         </SidebarWrap>

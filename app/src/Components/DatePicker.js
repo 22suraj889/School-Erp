@@ -9,6 +9,7 @@ import {
   storeStaffAttendance,
 } from "../api/StaffAttendance/StaffAttendance";
 import { toast } from "react-toastify";
+import "./Sidebar.css"
 
 const DatePicker = ({ minDate, maxDate }) => {
   const monthNames = [
@@ -115,6 +116,7 @@ const DatePicker = ({ minDate, maxDate }) => {
   };
 
   const handleSelectedDate = async (event) => {
+    if(!isPastDate(currentYear, currentMonth, event.target.getAttribute("data-day"))){
     setIsButtonDisabled(true);
     if (event.target.id === "day") {
       const selectedDay = event.target.getAttribute("data-day");
@@ -124,6 +126,7 @@ const DatePicker = ({ minDate, maxDate }) => {
       setIsLoading(true);
       fetchAttendanceList(newSelectedDate);
     }
+  }
   };
 
   const getTimeFromState = (_day) => {
@@ -131,6 +134,7 @@ const DatePicker = ({ minDate, maxDate }) => {
   };
 
   const handleAction = async (actionType, staffId) => {
+    if(!isPastMonth(currentYear, currentMonth)){
     setIsButtonDisabled(false);
       setAttendanceData( async (attendanceData) =>  {
         const updatedStaffArray = attendanceData.staffArray.map((staff) => {
@@ -161,7 +165,7 @@ const DatePicker = ({ minDate, maxDate }) => {
           staffArray: updatedStaffArray,
         };
       });
-    
+    }
   };
 
   const handleSaveAttendence = async () => {
@@ -169,6 +173,20 @@ const DatePicker = ({ minDate, maxDate }) => {
     console.log("att",attendanceData)
     const response = await storeStaffAttendance(attendanceData);
     console.log(response.message);
+  };
+
+  const isPastDate = (year, month, day) => {
+    const currentDate = new Date();
+    const selectedDate = new Date(year, month, day);
+
+    return currentDate < selectedDate;
+  };
+  const isPastMonth = (year, month) => {
+    const currentDate = new Date();
+    const firstDayOfCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const firstDayOfSelectedMonth = new Date(year, month, 1);
+
+    return firstDayOfCurrentMonth > firstDayOfSelectedMonth;
   };
 
   return (
@@ -205,6 +223,7 @@ const DatePicker = ({ minDate, maxDate }) => {
           <div className="sevenColGrid" onClick={handleSelectedDate}>
             {range(1, getNumberDaysInMonth(currentYear, currentMonth) + 1).map(
               (day) => (
+                
                 <p
                   key={day}
                   id="day"
@@ -222,7 +241,14 @@ const DatePicker = ({ minDate, maxDate }) => {
                         ? "current-date"
                         : ""
                       : ""
+                  }
+                  ${
+                    isPastDate(currentYear, currentMonth, day)
+                      ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
+                      : ""
                   }`}
+                
+                  
                 >
                   {day}
                 </p>
@@ -264,7 +290,11 @@ const DatePicker = ({ minDate, maxDate }) => {
                 <p>{staff.name}</p> 
                 <p>{staff.staffid}</p>
               </div>
-              <div className={`attendance-button ${staff.isPresent ? "" : "color-red"}`} onClick={() => handleAction("toggle", staff.staffid)}>
+              <div className={`attendance-button ${staff.isPresent ? "" : "color-red"}  ${
+                isPastMonth(currentYear, currentMonth)
+                  ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
+                  : ""
+              } `} onClick={() => handleAction("toggle", staff.staffid)}>
                 {staff.isPresent ? "Present" : "Absent"}
               </div>
             </div>

@@ -33,3 +33,14 @@ div a {
   max-width: 318px !important;
   /* padding-bottom: 150px !important; */
 }
+
+.activeSubM {
+  background: #808080 !important;
+  color: white !important;
+}
+
+.pastDate {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
