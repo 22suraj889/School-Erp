@@ -27,11 +27,6 @@ div a {
 .icon-parent{
   position: relative;
 }
-
-.icon-parent a span {
-  /* color: black !important; */
-}
-
 .main-sidenavbar {
   /* margin-bottom: 50px !important; */
   min-width: 318px !important;
