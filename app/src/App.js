@@ -42,9 +42,22 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isSearchResultPage, setIsSearchResultPage] = useState(false);
 
-   useEffect(() => {
-    setIsSearchResultPage(window.location.pathname.startsWith("/searchresult/"));
-  }, [window.location.pathname]);
+  useEffect(() => {
+    const handleUrlChange = () => {
+      setIsSearchResultPage(window.location.pathname.startsWith("/searchresult/"));
+    };
+  
+    // Initial check
+    handleUrlChange();
+  
+    // Add event listener for URL changes
+    window.addEventListener("popstate", handleUrlChange);
+  
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("popstate", handleUrlChange);
+    };
+  }, []);
 
   return (
     <UserProvider>
@@ -54,7 +67,7 @@ const App = () => {
             <Navbar setIsAuthenticated={setIsAuthenticated} />
           )}
           <div className="flex">
-            {!isSearchResultPage && isAuthenticated && <Sidebar />}
+          {isAuthenticated && !isSearchResultPage && <Sidebar />}
             <Routes>
               {!isAuthenticated && (
                 <Route
