@@ -105,7 +105,7 @@ const AddOrUpdateNoticeForm = ({
               </label>
               <input
                 type="text"
-                name="noticeTo"
+                name="noticeSubject"
                 value={noticeData.noticeSubject}
                 onChange={handleInputChange}
                 className="mt-1 p-2 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
