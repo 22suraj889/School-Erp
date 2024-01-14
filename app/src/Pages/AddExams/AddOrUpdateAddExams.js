@@ -10,6 +10,8 @@ import {
 } from "../../api/ExamAddtion/AddExam";
 import { getAllOptionalSubjectsName } from "../../api/ClassMaster/AddOptionalSubject";
 import { getAllclassesAndSubjects } from "../../api/ClassMaster/AddClassAndSection";
+import { toast } from "react-toastify";
+
 
 const AddOrUpdateFeeSlab = ({
   isUpdateOn,
@@ -40,6 +42,7 @@ const AddOrUpdateFeeSlab = ({
   const getClassesAndSubjects = async () => {
     await getAllclassesAndSubjects().then((data) => {
       setClassesAndSubjectData(data);
+      console.log("Classs and subject data",data);
     });
   };
 
@@ -132,13 +135,21 @@ const AddOrUpdateFeeSlab = ({
     try {
       const response = await updateExamInDatabase(DocId, examData);
 
-      setConfirmationMessage(response.message);
-      setExamData(initiaclData);
-      setTimeout(() => {
+      if(response.status){
+        setExamData(initiaclData);
         setConfirmationMessage(null);
         setIsModalOpen(false);
-        handleFeeSlabUpdated();
-      }, 2000);
+
+        toast.success(response.message);
+      }
+      if(!response.status){
+        setConfirmationMessage(null);
+        setExamData(initiaclData);
+        setIsModalOpen(false);
+        toast.error(response.message);
+      }
+
+
     } catch (error) {
       console.error("Error updating subject data", error);
     }
@@ -148,17 +159,23 @@ const AddOrUpdateFeeSlab = ({
     try {
       const response = await addExamToDatabase(examData);
 
-      setConfirmationMessage(response.message);
+      if(response.status){
 
       setExamData(initiaclData);
+      setIsModalOpen(false);
+      handleExamAdded();
+      toast.success(response.message);
+      }
+      if(!response.status){
+        setExamData(initiaclData);
+        setIsModalOpen(false);
+        toast.error(response.message);
+      }
     } catch (error) {
       console.error("Error updating subject data", error);
     }
-    setTimeout(() => {
-      setConfirmationMessage(null);
-      setIsModalOpen(false);
-      handleExamAdded();
-    }, 2000);
+  
+
   };
 
   if (!isModalOpen) return null;

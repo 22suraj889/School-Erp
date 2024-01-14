@@ -10,6 +10,7 @@ import {
   getAcademicYearDatesFromDb,
   getAdmissionDatesFromDb,
 } from "../../api/CoreFunctions/CoreSettings.js";
+import { toast } from "react-toastify";
 
 const CoreSettings = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -106,8 +107,17 @@ const CoreSettings = () => {
         endDate: admissionEndDate,
       };
 
-      await updateOrCreateAcademicYearInDb(academicYearData);
-      await updateOrCreateAdmissionDataInDb(admissionData);
+      const res1 = await updateOrCreateAcademicYearInDb(academicYearData);
+      const res2 = await updateOrCreateAdmissionDataInDb(admissionData);
+
+      if (res1.status && res2.status) {
+        toast.success("Core settings updated successfully");
+      }
+      if (!res1.status || !res2.status) {
+        toast.error("Error updating core settings");
+      }
+
+      
       setIsDisabled(true);
     } catch (error) {
       console.error("Error updating fee collection details: ", error);

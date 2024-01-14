@@ -99,11 +99,23 @@ const AssignSection = () => {
     setDocId(null);
     setShowDeleteAlert(false);
   };
-  const saveButtonClicked = () => {
+
+  const saveButtonClicked = async () => {
     console.log(initialStudentAndClassData );
+    const res = await updateMultipleStudentsSections(initialStudentAndClassData)
 try {
-    const res = updateMultipleStudentsSections(initialStudentAndClassData)
+
+    console.log(res.message, "inside save button clicked");
+    if(res.status){
     setIsSaveButtonDisabled(true)
+    toast.success(res.message);
+    }
+    if(!res.status){
+      toast.error(res.message);
+  
+  
+    }
+
 }
 catch (e) {
     console.log("Error:" + e)

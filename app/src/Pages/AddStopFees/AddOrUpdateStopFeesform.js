@@ -59,33 +59,34 @@ const AddOrUpdateStopForm = ({
     try {
       const response = await updateTransportDataToDatabase(DocId, stopData);
 
-      setConfirmationMessage(response.message);
       setStopData(initialStopData);
       toast.success(response.message);
-      setTimeout(() => {
-        setConfirmationMessage(null);
         setIsModalOpen(false);
         handleStopUpdated();
-      }, 2000); // Hide the message after 2 seconds
+
     } catch (error) {
+      toast.error("Error updating data");
       console.error("Error updating stop data", error);
     }
   };
 
   const handleAdd = async () => {
-    try {
+ 
       const response = await addTransportDataToDb(stopData);
-      toast.success(response.message);
-      setConfirmationMessage(response.message);
-      setStopData(initialStopData);
-    } catch (error) {
-      console.error("Error adding stop data", error);
-    }
-    setTimeout(() => {
-      setConfirmationMessage(null);
+      if(response.status) {
+        setIsModalOpen(false);
+        toast.success(response.message);
+        setStopData(initialStopData);
+      }
+
+      if(!response.status) {
+      
+
       setIsModalOpen(false);
       handleStopAdded();
-    }, 2000); // Hide the message after 2 seconds
+      toast.error(response.message);
+      }
+
   };
 
   if (!isModalOpen) return null;
@@ -166,11 +167,7 @@ const AddOrUpdateStopForm = ({
           </div>
         </form>
       </div>
-      {confirmationMessage && (
-        <div className="text-green-500 mt-4 text-center">
-          {confirmationMessage}
-        </div>
-      )}
+
     </Modal>
   );
 };

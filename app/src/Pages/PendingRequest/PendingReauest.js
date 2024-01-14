@@ -70,8 +70,12 @@ const PendingRequest = () => {
       if (response.status) {
         setDocId(null);
         setDataChanged(true);
+        toast.success(response.message);
       }
-      toast.success(response.message);
+      else if(!response.status){
+        setDocId(null);
+        toast.error(response.message);
+      }
     } else {
       console.log("Approved document with ID:", docId);
       const response = await getApplicantStudentDataFromDd(docId);

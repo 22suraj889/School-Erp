@@ -3,6 +3,7 @@ import DynamicTable from "../../Components/DynamicTable";
 import AddButton from "../../Components/AddButton";
 import { Oval } from "react-loader-spinner";
 import AddOrUpdateFeeSlab from "./AddOrUpdateFeeSlab";
+import AlertComponent from "../../Components/AlertComponent";
 import {
   deleteFeeSlabData,
   getFeeSlabDataFromDatabase,
@@ -14,7 +15,7 @@ import TableTitle from "../../Components/TableTitle";
 const AddFeeSlab = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [feeSlabUpdate, setFeeSlabUpdate] = useState(false);
-
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [feeSlabData, setFeeSlabData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dataChanged, setDataChanged] = useState(false);
@@ -50,12 +51,32 @@ const AddFeeSlab = () => {
       console.log(docId);
       setIsModalOpen(true);
     } else if (actionType === "delete") {
-      const response = await deleteFeeSlabData(documentId);
-      console.log("Delete document with ID:", documentId);
-      if (response.status) {
-        setDataChanged(true);
-      }
+      setDocId(documentId);
+      setShowDeleteAlert(true);
+  
+ 
     }
+  };
+  const onConfirm = async () => {
+    const response = await deleteFeeSlabData(docId);
+    console.log("Delete document with ID:", docId);
+    if (response.status) {
+      
+      setDataChanged(true);
+      setDocId(null);
+      setShowDeleteAlert(false);
+      toast.success("Fee Slab deleted successfully");
+    }
+    if (response.error) {
+      setDocId(null);
+      setShowDeleteAlert(false);
+      toast.error("Error deleting Fee Slab");
+    }
+  };
+
+  const onCancel = () => {
+    setDocId(null);
+    setShowDeleteAlert(false);
   };
 
   // Function to open the modal
@@ -70,10 +91,9 @@ const AddFeeSlab = () => {
 
   const handleFeeSlabUpdated = () => {
     setFeeSlabUpdate(true);
-    setTimeout(() => {
       setFeeSlabUpdate(false);
       setDataChanged(true);
-    }, 2000);
+  
   };
 
   return (
@@ -127,6 +147,9 @@ const AddFeeSlab = () => {
         DocId={docId}
         isUpdateOn={feeSlabUpdate}
       />
+      {showDeleteAlert && (
+        <AlertComponent onConfirm={onConfirm} onCancel={onCancel} />
+      )}
     </div>
   );
 };

@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import Modal from "../../Components/Modal";
 import Alert from "@mui/material/Alert";
 import "../AddTeacher/AddTeacherForm.css";
+
 import { getFeeCollectionDetailsFromDb, updateOrCreateFeeCollectionDetailsInDb } from "../../api/CoreFunctions/CoreSettings";
+import { toast } from "react-toastify";
 
 
 
@@ -27,7 +29,13 @@ const [bankName, setBankName] = useState("");
       accountHoldersName: accountHoldersName,
       bankName: bankName,
     };
-    await updateOrCreateFeeCollectionDetailsInDb(feeCollectionData)
+    const res = await updateOrCreateFeeCollectionDetailsInDb(feeCollectionData);
+    if(res.status){
+      toast.success(res.message);
+    }
+    if(!res.status){
+      toast.error(res.message);
+    }
     console.log(feeCollectionData);
     onClose();
   }

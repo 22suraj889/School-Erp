@@ -75,11 +75,18 @@ const AddorUpdateNonTeachingStaff = ({
 
   const handleUpdate = async () => {
     try {
-      const response = await updateStaffToDatabase(DocId, staffData);
 
+  
+      const response = await updateStaffToDatabase(DocId, staffData);
+      if(response.status) {
       toast.success(response.message);
 
       setstaffData(inticalData);
+      }
+      if(!response.status){
+        toast.error(response.message);
+        setstaffData(inticalData);
+      }
 
        
     } catch (error) {
@@ -107,8 +114,17 @@ const AddorUpdateNonTeachingStaff = ({
     } else {
       try {
         const response = await addNonTeachingStaffToDb(staffData);
+
+
+        if (response.status) {
         toast.success(response.message);
         setstaffData(inticalData);
+        }
+        if(!response.status){
+          toast.error(response.message);
+          setstaffData(inticalData);
+        }
+
       } catch (error) {
         console.error("Error updating subject data", error);
       }

@@ -10,6 +10,7 @@ import {
 import { getFeeStructureDataTable } from "../../api/FeeStructure/AddFeeStructure";
 import "../../App.css";
 import TableTitle from "../../Components/TableTitle";
+import { toast } from "react-toastify";
 
 const AddFeeSlab = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,11 +50,7 @@ const AddFeeSlab = () => {
       console.log(docId);
       setIsModalOpen(true);
     } else if (actionType === "delete") {
-      const response = await deleteFeeSlabData(documentId);
-      console.log("Delete document with ID:", documentId);
-      if (response.status) {
-        setDataChanged(true);
-      }
+      console.log("delete document with ID:", documentId);
     }
   };
 
