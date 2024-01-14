@@ -9,6 +9,7 @@ import "./Navbar.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaSearch } from "react-icons/fa";
+import { GoArrowUpLeft } from "react-icons/go";
 
 function SearchComponent() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,7 +37,6 @@ function SearchComponent() {
       toast.error("Error Searching data");
     }
   }, 100);
-
 
   const handleChange = (event) => {
     const term = event.target.value;
@@ -99,12 +99,16 @@ function SearchComponent() {
             {searchResults.students.map((student) => (
               <li
                 key={student.id}
-                className="bg-[#888787] border rounded-lg p-2 my-2 cursor-pointer"
                 onClick={() => handleStudentItemClick(student.id)}
               >
-                <span className="font-bold">{student.firstName}</span> -
-                <span className="text-white ml-2">({student.studentId})</span>
-                <span className="text-sm text-lightGray ml-2">Student</span>
+                <div>
+                  <span className="roles">{student.firstName}</span>
+                  <span className="ids ml-2">({student.studentId})</span>
+                </div>
+                <div className="role">
+                  <span className="names text-lightGray ml-2">Student</span>
+                  <GoArrowUpLeft />
+                </div>
               </li>
             ))}
           </ul>
@@ -113,12 +117,16 @@ function SearchComponent() {
             {searchResults.teachers.map((teacher) => (
               <li
                 key={teacher.id}
-                className="bg-[#888787] border rounded-lg p-2 my-2 cursor-pointer"
                 onClick={() => handleTeacherItemClick(teacher.id)}
               >
-                <span className="font-bold">{teacher.firstName}</span>
-                <span className="text-white ml-2">({teacher.teacherId})</span>
-                <span className="text-sm text-lightGray ml-2">Teacher</span>
+                <div>
+                  <span className="roles">{teacher.firstName}</span>
+                  <span className="ids ml-2">({teacher.teacherId})</span>
+                </div>
+                <div className="role">
+                  <span className="names text-lightGray ml-2">Teacher</span>
+                  <GoArrowUpLeft />
+                </div>
               </li>
             ))}
           </ul>

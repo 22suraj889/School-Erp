@@ -7,13 +7,73 @@
 }
 .search-show {
   position: absolute;
-  width: 450px;
-  background-color: #e5e5e5;
+  background-color: white;
   margin-top: 10px;
-  padding: 30px 30px;
+  padding: 10px;
   left: 50%;
   transform: translate(-50%, 0%);
-  border-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  overflow-y: auto;
+  max-height: 450px;
+}
+.search-show::-webkit-scrollbar {
+  width: 0; /* Hide scrollbar for Chrome, Safari, and Opera */
+}
+
+.search-show {
+  scrollbar-width: thin; /* Hide scrollbar for Firefox */
+  overflow-y: scroll; /* Enable scrolling for Firefox */
+}
+.search-show ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.search-show li {
+  width: 350px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+}
+.search-show li::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96%;
+  height: 2px;
+  background: #DBDBDB;
+}
+.search-show li div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.search-show .names {
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  color: gray;
+  font-weight: 500;
+}
+.search-show .roles {
+  font-size: 20px;
+  font-weight: 600;
+}
+.search-show .ids {
+  color: gray;
+  font-size: 15px;
+}
+.search-show .role {
+  gap: 10px;
+  font-size: 20px;
+  font-weight: bold;
 }
 .search-icon {
   position: absolute;
@@ -27,12 +87,12 @@
   align-items: center;
   justify-content: center;
 }
-.logout-dropdown{
+.logout-dropdown {
   position: absolute;
   top: 60px;
 }
-.logout-dropdown div{
+.logout-dropdown div {
   background: white;
-    border: 2px solid #333333;
-    border-bottom-left-radius: 20px;
+  border: 2px solid #333333;
+  border-bottom-left-radius: 20px;
 }
