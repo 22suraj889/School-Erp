@@ -58,6 +58,10 @@ const NonTeachingStaffSalaryTable = () => {
               strokeWidthSecondary={2}
             />
           ) : (
+            <div>
+              <div className="flex flex-row-reverse">
+                <button className="bg-gray-700 p-3 mb-5 text-white border border-gray-300 rounded-md">Settings</button>
+                </div>
             <div className="add-optional-sub-table">
               <h1 className="h-16 text-center font-bold text-white flex items-center justify-center">
                 Salary To be Paid
@@ -95,6 +99,7 @@ const NonTeachingStaffSalaryTable = () => {
                 sectionList={false}
                 csvFileName="Non Teaching Staff Salaries"
               />
+            </div>
             </div>
           )}
         </div>
