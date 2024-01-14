@@ -9,6 +9,7 @@ import {
 import "./AddSubjectForm.css";
 import "../AddTeacher/AddTeacherForm.css";
 import { toast } from "react-toastify";
+import { calculateCollectionLength } from "../../api/CountLenghtDb";
 
 const AddOrUpdateSubjectForm = ({
   isUpdateOn,
@@ -18,20 +19,40 @@ const AddOrUpdateSubjectForm = ({
   handleSubjectAdded,
   handleSubjectUpdated,
 }) => {
-  const inticalData = {
-    subjectTotalMarks: 100,
-    subjectName: "",
-    subjectCode: "",
-  };
-  const [subjectData, setSubjectData] = useState(inticalData);
-
-  const [error, setError] = useState(false);
+  const [subjectId,setsubjectId] = useState("")
 
   useEffect(() => {
     if (isModalOpen && isUpdateOn) {
       getSubjectData(DocId);
     }
+    getRandomId();
+   
   }, [isModalOpen, isUpdateOn]);
+
+  const getRandomId = async()=>{
+    const length = await calculateCollectionLength("AddSubjects");
+    console.log("length->",length);
+    if (length === -1) {
+      setsubjectId(`sub${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->",subjectId)
+
+    } else {
+      const formattedId = length + 1 < 10 ? `sub00${length + 1}` : `sub0${length + 1}`;
+      setsubjectId(formattedId);
+      console.log("idsub->",subjectId)
+
+    }
+  }
+  
+  const inticalData = {
+    subjectTotalMarks: 100,
+    subjectName: "",
+    subjectCode:subjectId,
+  };
+
+  const [subjectData, setSubjectData] = useState(inticalData);
+  const [error, setError] = useState(false);
+
 
   const getSubjectData = async (DocId) => {
     try {
@@ -70,10 +91,12 @@ const AddOrUpdateSubjectForm = ({
   };
 
   const handleAdd = async () => {
-    if (!subjectData.subjectCode || !subjectData.subjectName) {
+    if (!subjectData.subjectName) {
       setError(true);
     } else {
       try {
+        subjectData.subjectCode = subjectId;
+        console.log("subject data",subjectData)
         const response = await addSubjectToDatabase(subjectData);
         toast.success(response.message);
         setSubjectData(inticalData);
@@ -109,8 +132,8 @@ const AddOrUpdateSubjectForm = ({
               <input
                 type="text"
                 name="subjectCode"
-                value={subjectData.subjectCode}
-                onChange={handleInputChange}
+                value={isUpdateOn?subjectData.subjectCode: subjectId}
+                readOnly
                 className="mt-1 p-2 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
