@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DynamicTable from "../../Components/DynamicTable";
 import { Oval } from "react-loader-spinner";
+import SettingsFrom from "./SalaryToTeacherform";
 import { getTeacherAndSalaryDataFromDatabase } from "../../api/StaffManagement/SalaryToTeachers";
 import "../../App.css";
 
@@ -8,6 +9,7 @@ const TeacherSalaryTable = () => {
   const [teacherSalaryData, setTeacherSalaryData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchData = (selectedMonth) => {
     setIsLoading(true);
@@ -21,7 +23,10 @@ const TeacherSalaryTable = () => {
         setIsLoading(false);
       });
   };
-
+  const openModal = () => {
+    console.log("Open modal");
+    setIsModalOpen(true);
+  };
   useEffect(() => {
     // Get the abbreviated month
     const abbreviatedMonth = new Date().toLocaleString('default', { month: 'short' });
@@ -59,12 +64,14 @@ const TeacherSalaryTable = () => {
           ) : (
             <div>
               <div className="flex flex-row-reverse">
-                <button className="bg-gray-700 p-3 mb-5 text-white border border-gray-300 rounded-md">Settings</button>
+                <button className="bg-gray-700 p-3 mb-5 text-white border border-gray-300 rounded-md" onClick={openModal}>Settings</button>
                 </div>
             <div className="add-optional-sub-table">
             <h1 className="h-16 text-center font-bold text-white flex items-center justify-center">
             Salary To be Paid
-
+            <SettingsFrom
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}/>
             <select
             id="teacherMonthSelect"
             className="text-black ml-4"
