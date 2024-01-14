@@ -38,3 +38,9 @@ div a {
   background: #808080 !important;
   color: white !important;
 }
+
+.pastDate {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+
