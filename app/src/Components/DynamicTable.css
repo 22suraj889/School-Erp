@@ -1,7 +1,7 @@
 .table-cols th {
-  background-color: #B5B5B5;
+  background-color: #b5b5b5;
 }
-.download-csv a{
+.download-csv a {
   position: absolute;
   top: -50px;
   right: 4%;
@@ -10,12 +10,83 @@
   border: 2px solid white;
   border-radius: 10px;
 }
-.download-csv .csv-button{
+.download-csv .csv-button {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 5px;
 }
-.csv-button .csv-icon{
+.csv-button .csv-icon {
   color: green;
+}
+.search-teacher {
+  gap: 10px;
+  align-items: center;
+}
+.icon-teacher-serach {
+  font-size: 40px;
+  font-weight: bold;
+}
+.search-div {
+  display: flex;
+  background-color: #333333;
+  position: relative;
+  border-radius: 6px !important;
+}
+.search-teacher-input {
+  background-color: #333333;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: 500;
+  color: white;
+  border-radius: 50px;
+  border: none;
+}
+.search-icon-teacher {
+  position: absolute;
+  top: 9px;
+  right: 3px;
+  color: white;
+  font-size: 27px;
+  font-weight: bold;
+}
+.table-teacher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.single-card {
+  width: 270px;
+  padding: 20px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 3px;
+  background: #fff;
+  box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.25);
+}
+.card-namings p {
+  background-color: white !important;
+}
+.card-namings p:first-child {
+  font-size: 20px;
+  font-weight: 700;
+}
+.card-namings p:nth-child(2) {
+  font-weight: 600;
+  color: gray;
+}
+.attendance-button {
+  padding: 5px 10px;
+  border-radius: 4px;
+  background: #03e627;
+  color: white;
+  font-size: 20px;
+  align-self: self-start;
+  font-weight: 600;
+  cursor: pointer;
+}
+.color-red{
+background: #E60303;
 }
