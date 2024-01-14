@@ -34,6 +34,7 @@ const DynamicTable = ({
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedData = data.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(data.length / itemsPerPage);
 
   return (
 
@@ -217,6 +218,9 @@ const DynamicTable = ({
             >
               <FaArrowLeft />
             </button>
+            <span className="px-2 py-2 text-gray-800">
+            {currentPage} of {totalPages}
+          </span>
             <button
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={endIndex >= data.length}
