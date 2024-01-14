@@ -25,6 +25,12 @@ const AddStudentForm = ({ isModalOpen, setIsModalOpen }) => {
     aadharNo: "",
   });
 
+  const [checkboxValue, setCheckboxValue] = useState('Notpaid'); 
+
+const handleCheckboxChange = (e) => {
+  setCheckboxValue(e.target.checked ? 'Yes' : 'Notpaid');
+}
+const [checked, setChecked] = useState(false);
 
   const getClasses = async () => {
     await getAllclassNames().then((data) => {
@@ -49,6 +55,7 @@ const AddStudentForm = ({ isModalOpen, setIsModalOpen }) => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
+      applicationFees: checkboxValue,
       [e.target.name]: e.target.value,
     });
   };
@@ -214,7 +221,8 @@ const AddStudentForm = ({ isModalOpen, setIsModalOpen }) => {
                     type="checkbox"
                     name="applicationFees"
                     value={formData.applicationFees}
-                    onChange={handleChange}
+                    checked={checkboxValue === 'Yes'}
+                    onChange={handleCheckboxChange}
                     required
                     className="mt-2  w-10 h-8 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DynamicTable from "../../Components/DynamicTable";
 import { Oval } from "react-loader-spinner";
+import SettingsFrom from "./SalaryToNonTeachingStaffForm";
 import { getNonTeachingStaffSalaryDataFromDatabase } from "../../api/StaffManagement/SalaryToNonTeachingStaff";
 import "../../App.css";
 
@@ -8,7 +9,8 @@ const NonTeachingStaffSalaryTable = () => {
     const [nonTeachingStaffSalaryData, setNonTeachingStaffSalaryData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [monthName, setMonthName] = useState(""); // Set an empty string initially
-  
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const fetchData = (initialMonth) => {
       setIsLoading(true);
       getNonTeachingStaffSalaryDataFromDatabase(initialMonth)
@@ -21,7 +23,12 @@ const NonTeachingStaffSalaryTable = () => {
           setIsLoading(false);
         });
     };
-  
+
+  const openModal = () => {
+    console.log("Open modal");
+    setIsModalOpen(true);
+  };
+
     useEffect(() => {
       // Get the abbreviated month
       const abbreviatedMonth = new Date().toLocaleString('default', { month: 'short' });
@@ -58,6 +65,15 @@ const NonTeachingStaffSalaryTable = () => {
               strokeWidthSecondary={2}
             />
           ) : (
+            <div>
+              <div className="flex flex-row-reverse">
+                <button className="bg-gray-700 p-3 mb-5 text-white border border-gray-300 rounded-md" onClick={openModal} >Settings</button>
+                </div>
+
+                <SettingsFrom
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}/>
+
             <div className="add-optional-sub-table">
               <h1 className="h-16 text-center font-bold text-white flex items-center justify-center">
                 Salary To be Paid
@@ -95,6 +111,7 @@ const NonTeachingStaffSalaryTable = () => {
                 sectionList={false}
                 csvFileName="Non Teaching Staff Salaries"
               />
+            </div>
             </div>
           )}
         </div>
