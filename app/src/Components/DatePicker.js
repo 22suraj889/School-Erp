@@ -290,7 +290,11 @@ const DatePicker = ({ minDate, maxDate }) => {
                 <p>{staff.name}</p> 
                 <p>{staff.staffid}</p>
               </div>
-              <div className={`attendance-button ${staff.isPresent ? "" : "color-red"}`} onClick={() => handleAction("toggle", staff.staffid)}>
+              <div className={`attendance-button ${staff.isPresent ? "" : "color-red"}  ${
+                isPastMonth(currentYear, currentMonth)
+                  ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
+                  : ""
+              } `} onClick={() => handleAction("toggle", staff.staffid)}>
                 {staff.isPresent ? "Present" : "Absent"}
               </div>
             </div>
