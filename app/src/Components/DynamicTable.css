@@ -42,6 +42,11 @@
   border-radius: 50px;
   border: none;
 }
+.search-teacher-input:focus-visible, .search-teacher-input:focus, .search-teacher-input:active{
+  outline: none !important;
+}
+
+
 .search-icon-teacher {
   position: absolute;
   top: 9px;
