@@ -13,6 +13,7 @@ import {
   getSpecificExpenseDataFromDb,
   updateExpenseDataToDatabase,
 } from "../../api/ExpenseAdding/AddExpense";
+import { toast } from "react-toastify";
 
 const AddOrUpdateExpenseForm = ({
   isUpdateOn,
@@ -62,15 +63,18 @@ const AddOrUpdateExpenseForm = ({
     try {
       const response = await updateExpenseDataToDatabase(DocId, expenseData);
 
-      setConfirmationMessage(response.message);
-
-      setExpenseData(inticalData);
-
-      setTimeout(() => {
+      if (response.status) {
+        setExpenseData(inticalData);
         setConfirmationMessage(null);
         setIsModalOpen(false);
         handleExpenseUpdated();
-      }, 2000);
+        toast.success(response.message);
+      }
+      if (!response.status) {
+        setConfirmationMessage(null);
+        setIsModalOpen(false);
+        toast.error(response.message);
+      }
     } catch (error) {
       console.error("Error updating subject data", error);
     }
@@ -80,17 +84,21 @@ const AddOrUpdateExpenseForm = ({
     try {
       const response = await addExpenseDataToDb(expenseData);
       // Show a confirmation message
-      setConfirmationMessage(response.message);
-
-      setExpenseData(inticalData);
+      if (response.status) {
+        setExpenseData(inticalData);
+        setConfirmationMessage(null);
+        setIsModalOpen(false);
+        handleExpenseAdded();
+        toast.success(response.message);
+      }
+      if (!response.status) {
+        setExpenseData(inticalData);
+        setIsModalOpen(false);
+        toast.error(response.message);
+      }
     } catch (error) {
       console.error("Error updating subject data", error);
     }
-    setTimeout(() => {
-      setConfirmationMessage(null);
-      setIsModalOpen(false);
-      handleExpenseAdded();
-    }, 2000); // Hide the message after 2 seconds
   };
 
   if (!isModalOpen) return null;

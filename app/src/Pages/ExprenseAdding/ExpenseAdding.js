@@ -10,6 +10,7 @@ import {
 import AlertComponent from "../../Components/AlertComponent";
 import "../../App.css";
 import TableTitle from "../../Components/TableTitle"
+import { toast } from "react-toastify";
 const AddSubject = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expenseUpdate, setexpenseUpdate] = useState(false);
@@ -55,11 +56,16 @@ const AddSubject = () => {
   };
   const onConfirm = async () => {
     const response = await deleteExpenseData(docId);
+
     console.log("Delete document with ID:", docId);
     if (response.status) {
       setDataChanged(true);
       setDocId(null);
       setShowDeleteAlert(false);
+      toast.success(response.message);
+    }
+    if (!response.status) {
+      toast.error(response.message);
     }
   };
 

@@ -3,13 +3,13 @@ import { Oval } from "react-loader-spinner"; // Assuming you are using the Oval 
 import "../Pages/PutAttendance/PutAttendancs.css";
 import { CiSearch } from "react-icons/ci";
 import { CiCircleInfo } from "react-icons/ci";
-
+import "./DynamicTable.css";
 import {
   getAttendanceList,
   storeStaffAttendance,
 } from "../api/StaffAttendance/StaffAttendance";
-import DynamicTable from "./DynamicTable";
 import { toast } from "react-toastify";
+import "./Sidebar.css"
 
 const DatePicker = ({ minDate, maxDate }) => {
   const monthNames = [
@@ -57,6 +57,7 @@ const DatePicker = ({ minDate, maxDate }) => {
   const [attendanceList, setAttendanceList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [attendanceData, setAttendanceData] = useState({});
+  
 
   const formatToYYYYMMDD = (date) => {
     const year = date.getFullYear();
@@ -77,10 +78,13 @@ const DatePicker = ({ minDate, maxDate }) => {
         staffArray: attlist.map((entry) => ({
           staffid: entry.EmpId,
           isPresent: entry.Status,
+          name: entry.Name,
         })),
         date: formattedDate,
       };
       setAttendanceData(transformedData);
+      console.log(attendanceList);
+      console.log(attendanceData);
     } catch (error) {
       console.error("Error fetching attendance list:", error);
       toast.error("Error fetching data");
@@ -112,6 +116,7 @@ const DatePicker = ({ minDate, maxDate }) => {
   };
 
   const handleSelectedDate = async (event) => {
+    if(!isPastDate(currentYear, currentMonth, event.target.getAttribute("data-day"))){
     setIsButtonDisabled(true);
     if (event.target.id === "day") {
       const selectedDay = event.target.getAttribute("data-day");
@@ -121,6 +126,7 @@ const DatePicker = ({ minDate, maxDate }) => {
       setIsLoading(true);
       fetchAttendanceList(newSelectedDate);
     }
+  }
   };
 
   const getTimeFromState = (_day) => {
@@ -128,9 +134,9 @@ const DatePicker = ({ minDate, maxDate }) => {
   };
 
   const handleAction = async (actionType, staffId) => {
+    if(!isPastMonth(currentYear, currentMonth)){
     setIsButtonDisabled(false);
-    if (actionType === "toggle") {
-      setAttendanceData((attendanceData) => {
+      setAttendanceData( async (attendanceData) =>  {
         const updatedStaffArray = attendanceData.staffArray.map((staff) => {
           if (staff.staffid === staffId) {
             return {
@@ -145,13 +151,15 @@ const DatePicker = ({ minDate, maxDate }) => {
           if (entry.EmpId === staffId) {
             return {
               ...entry,
-              Status: !entry.Status, // Toggle the Status value
+              Status: !entry.Status,
             };
           }
           return entry;
         });
 
+        
         setAttendanceList(updatedAttendanceList);
+        await handleSaveAttendence()
         return {
           ...attendanceData,
           staffArray: updatedStaffArray,
@@ -161,13 +169,29 @@ const DatePicker = ({ minDate, maxDate }) => {
   };
 
   const handleSaveAttendence = async () => {
+    
+    console.log("att",attendanceData)
     const response = await storeStaffAttendance(attendanceData);
     console.log(response.message);
   };
 
+  const isPastDate = (year, month, day) => {
+    const currentDate = new Date();
+    const selectedDate = new Date(year, month, day);
+
+    return currentDate < selectedDate;
+  };
+  const isPastMonth = (year, month) => {
+    const currentDate = new Date();
+    const firstDayOfCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const firstDayOfSelectedMonth = new Date(year, month, 1);
+
+    return firstDayOfCurrentMonth > firstDayOfSelectedMonth;
+  };
+
   return (
-    <div className="flex flex-col w-full items-center">
-      <div className="pickerWrapper mb-10">
+    <div className="flex flex-col w-full">
+      <div className="pickerWrapper mb-5">
         <div className="headerDate">
           <button
             onClick={prevMonth}
@@ -199,6 +223,7 @@ const DatePicker = ({ minDate, maxDate }) => {
           <div className="sevenColGrid" onClick={handleSelectedDate}>
             {range(1, getNumberDaysInMonth(currentYear, currentMonth) + 1).map(
               (day) => (
+                
                 <p
                   key={day}
                   id="day"
@@ -216,7 +241,14 @@ const DatePicker = ({ minDate, maxDate }) => {
                         ? "current-date"
                         : ""
                       : ""
+                  }
+                  ${
+                    isPastDate(currentYear, currentMonth, day)
+                      ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
+                      : ""
                   }`}
+                
+                  
                 >
                   {day}
                 </p>
@@ -240,46 +272,33 @@ const DatePicker = ({ minDate, maxDate }) => {
         />
       ) : (
         <div>
-          <div className="flex mt-5 mb-5">
-          <div className="mt-2 mb-2  flex rounded-md bg-gray-900 text-white ml-0 w-1/2">
-          <input
-        className="text-center py-1 ml-4  pl-1 rounded-md bg-gray-900 text-white"
-        type="text"
-        placeholder="Search Teacher"
-      />
-      <CiSearch className="mt-2" />
+          <div className="flex mt-5 mb-5 search-teacher">
+            <div className="search-div rounded-lg">
+              <input
+                className="search-teacher-input"
+                type="text"
+                placeholder="Search Teacher"
+              />
+              <CiSearch className="search-icon-teacher" />
+            </div>
+            <CiCircleInfo className="icon-teacher-serach" />
           </div>
-          <CiCircleInfo  className="mt-1  w-20 h-8"/>
-          </div>
-        <div className="add-optional-sub-table">
-
-          <h1 className="h-16 text-center font-bold text-white flex items-center justify-center">
-            Add Attendance
-          </h1>
-          <DynamicTable
-            data={attendanceList}
-            rowHeight={100}
-            action={false}
-            ispanding={false}
-            attendanceStatus={true}
-            handleAction={handleAction}
-            csvFileName="Staff Attendance"
-          />
-          <p className="h-16 text-center font-bold text-white flex items-center justify-center">
-            <button
-              type="button"
-              disabled={isButtonDisabled}
-              style={{
-                cursor: isButtonDisabled ? "not-allowed" : "pointer",
-              }}
-              onClick={handleSaveAttendence}
-              className={`cursor-pointer text-white font-semibold rounded px-3 py-1 mr-2 ${
-                isButtonDisabled ? "bg-gray-500" : "bg-black"
-              }`}
-            >
-              Save Attendence
-            </button>
-          </p>
+          <div className="table-teacher">
+          {attendanceData.staffArray.map((staff) => (
+            <div key={staff.staffid} className="single-card">
+              <div className="card-namings">
+                <p>{staff.name}</p> 
+                <p>{staff.staffid}</p>
+              </div>
+              <div className={`attendance-button ${staff.isPresent ? "" : "color-red"}  ${
+                isPastMonth(currentYear, currentMonth)
+                  ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
+                  : ""
+              } `} onClick={() => handleAction("toggle", staff.staffid)}>
+                {staff.isPresent ? "Present" : "Absent"}
+              </div>
+            </div>
+          ))}
         </div>
         </div>
       )}

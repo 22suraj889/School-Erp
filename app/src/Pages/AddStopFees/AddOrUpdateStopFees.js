@@ -68,12 +68,16 @@ const AddStop = () => {
       setShowDeleteAlert(false);
       toast.success(response.message);
     }
+    if (!response.status) {
+      setDocId(null);
+      setShowDeleteAlert(false);
+      toast.error(response.message);
+    }
   }
 
   const onCancel = () => {
     setDocId(null);
     setShowDeleteAlert(false);
-
   };
 
   // Function to open the modal
@@ -85,17 +89,19 @@ const AddStop = () => {
   };
 
   const handleStopAdded = () => {
-    setTimeout(() => {
+
       setDataChanged(true);
-    }, 2000); // Hide the message after 2 seconds
+      setIsModalOpen(false);
+      console.log("-================================")
+   // Hide the message after 2 seconds
   };
 
   const handleStopUpdated = () => {
     setStopUpdate(true);
-    setTimeout(() => {
-      setStopUpdate(false);
+   setStopUpdate(false);
       setDataChanged(true);
-    }, 2000); // Hide the message after 2 seconds
+      setIsModalOpen(false);
+   // Hide the message after 2 seconds
   };
 
   return (

@@ -1,5 +1,5 @@
 .activeDiv {
-  background: #505050;
+  background: #242424;
 }
 .activeDiv div span {
   color: white;
@@ -11,13 +11,6 @@ a div span {
 }
 
 div a {
-  box-shadow: inset 0 0 0.5px 1px hsla(0, 0%, 100%, 0.1),
-  /* 2. shadow ring 👇 */
-  0 0 0 1px hsla(230, 13%, 9%, 0.075),
-  /* 3. multiple soft shadows 👇 */
-  0 0.3px 0.4px hsla(230, 13%, 9%, 0.02),
-  0 0.9px 1.5px hsla(230, 13%, 9%, 0.045),
-  0 3.5px 6px hsla(230, 13%, 9%, 0.09) !important;
   padding: 22px !important;
 }
 
@@ -34,14 +27,20 @@ div a {
 .icon-parent{
   position: relative;
 }
-
-.icon-parent a span {
-  /* color: black !important; */
-}
-
 .main-sidenavbar {
   /* margin-bottom: 50px !important; */
   min-width: 318px !important;
   max-width: 318px !important;
-  padding-bottom: 150px !important;
+  /* padding-bottom: 150px !important; */
 }
+
+.activeSubM {
+  background: #808080 !important;
+  color: white !important;
+}
+
+.pastDate {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+

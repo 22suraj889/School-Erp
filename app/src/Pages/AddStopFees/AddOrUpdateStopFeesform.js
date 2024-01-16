@@ -37,18 +37,19 @@ const AddOrUpdateStopForm = ({
     getRandomId();
   }, [isModalOpen, isUpdateOn]);
 
-  const getRandomId = async()=>{
+  const getRandomId = async () => {
     const length = await calculateCollectionLength("AddStopAndFees");
-    console.log("length->",length);
+    console.log("length->", length);
     if (length === -1) {
       setStopId(`stop${Math.floor(Math.random() * 900) + 100}`);
-      console.log("idsub->",stopId)
+      console.log("idsub->", stopId);
     } else {
-      const formattedId = length + 1 < 10 ? `stop0${length + 1}` : `stop00${length + 1}`;
+      const formattedId =
+        length + 1 < 10 ? `stop0${length + 1}` : `stop00${length + 1}`;
       setStopId(formattedId);
-      console.log("idsub->",stopId)
+      console.log("idsub->", stopId);
     }
-  }
+  };
 
   const getStopData = async (DocId) => {
     try {
@@ -75,15 +76,12 @@ const AddOrUpdateStopForm = ({
     try {
       const response = await updateTransportDataToDatabase(DocId, stopData);
 
-      setConfirmationMessage(response.message);
       setStopData(initialStopData);
       toast.success(response.message);
-      setTimeout(() => {
-        setConfirmationMessage(null);
-        setIsModalOpen(false);
-        handleStopUpdated();
-      }, 2000); // Hide the message after 2 seconds
+      setIsModalOpen(false);
+      handleStopUpdated();
     } catch (error) {
+      toast.error("Error updating data");
       console.error("Error updating stop data", error);
     }
   };
@@ -92,21 +90,22 @@ const AddOrUpdateStopForm = ({
     try {
       stopData.stopId = stopId;
       const response = await addTransportDataToDb(stopData);
-      toast.success(response.message);
-      setConfirmationMessage(response.message);
-      setStopData(initialStopData);
+      if (response.status) {
+        setIsModalOpen(false);
+        toast.success(response.message);
+        setStopData(initialStopData);
+      }
+
+      if (!response.status) {
+        setIsModalOpen(false);
+        handleStopAdded();
+        toast.error(response.message);
+      }
     } catch (error) {
-      console.error("Error adding stop data", error);
+      console.error("Error updating subject data", error);
     }
-    setTimeout(() => {
-      setConfirmationMessage(null);
-      setIsModalOpen(false);
-      handleStopAdded();
-    }, 2000); // Hide the message after 2 seconds
   };
-
   if (!isModalOpen) return null;
-
   return (
     <Modal setShowModal={setIsModalOpen}>
       {error && (
@@ -142,7 +141,7 @@ const AddOrUpdateStopForm = ({
                 <input
                   type="text"
                   name="stopId"
-                  value={ isUpdateOn ? stopData.stopId : stopId}
+                  value={isUpdateOn ? stopData.stopId : stopId}
                   readOnly
                   className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
@@ -182,11 +181,6 @@ const AddOrUpdateStopForm = ({
           </div>
         </form>
       </div>
-      {confirmationMessage && (
-        <div className="text-green-500 mt-4 text-center">
-          {confirmationMessage}
-        </div>
-      )}
     </Modal>
   );
 };

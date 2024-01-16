@@ -8,6 +8,7 @@ export const addNoticeToDatabase = async (noticeData) => {
   try {
     await addDoc(noticeRef, {
       noticeTo: noticeData.noticeTo,
+      noticeSubject: noticeData.noticeSubject,
       noticeDescription: noticeData.noticeDescription,
       createdAt: serverTimestamp(),
     });

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import DynamicTable from "../../Components/DynamicTable";
 import AddButton from "../../Components/AddButton";
 import { Oval } from "react-loader-spinner";
+import AlertComponent from "../../Components/AlertComponent";
 
 import AddOrUpdateFeeSlab from "./AddOrUpdateAddExams";
-
+import { toast } from "react-toastify";
 import { deleteExam, getExamsDatabase } from "../../api/ExamAddtion/AddExam";
 import "../../App.css";
 import TableTitle from "../../Components/TableTitle";
@@ -17,12 +18,13 @@ const AddExam = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [dataChanged, setDataChanged] = useState(false);
   const [docId, setDocId] = useState(null);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   const fetchData = () => {
     getExamsDatabase()
       .then((data) => {
         setExamData(data);
-        console.log(examData);
+        console.log("Exam data=============",data);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -51,12 +53,30 @@ const AddExam = () => {
       console.log(docId);
       setIsModalOpen(true);
     } else if (actionType === "delete") {
-      const response = await deleteExam(documentId);
-      console.log("Delete document with ID:", documentId);
-      if (response.status) {
-        setDataChanged(true);
-      }
+
+      setShowDeleteAlert(true);
+      setDocId(documentId);
+     
     }
+  };
+  const onConfirm = async () => {
+    const response = await deleteExam(docId);
+    console.log("Delete document with ID:", docId);
+    if (response.status) {
+      setDataChanged(true);
+      setDocId(null);
+      setShowDeleteAlert(false);
+      toast.success(response.message);
+    }
+    if (!response.status) {
+      setDocId(null);
+      setShowDeleteAlert(false);
+      toast.error(response.message);
+    }
+  };
+  const onCancel = () => {
+    setDocId(null);
+    setShowDeleteAlert(false);
   };
 
   // Function to open the modal
@@ -65,16 +85,16 @@ const AddExam = () => {
     setIsModalOpen(true);
   };
 
+
   const handleExamAdded = () => {
     setDataChanged(true);
   };
 
   const handlExamUpdated = () => {
     setExamDataUpdate(true);
-    setTimeout(() => {
       setExamDataUpdate(false);
       setDataChanged(true);
-    }, 2000);
+ 
   };
 
   return (
@@ -125,6 +145,9 @@ const AddExam = () => {
         DocId={docId}
         isUpdateOn={examDataUpdate}
       />
+      {showDeleteAlert && (
+        <AlertComponent onConfirm={onConfirm} onCancel={onCancel} />
+      )}
     </div>
   );
 };

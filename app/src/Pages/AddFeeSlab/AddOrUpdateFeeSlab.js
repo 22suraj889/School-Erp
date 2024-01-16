@@ -10,6 +10,7 @@ import {
 } from "../../api/FeeStructure/AddFeeSlab";
 import { getAllclassNames } from "../../api/ClassMaster/AddClassAndSection";
 import { calculateCollectionLength } from "../../api/CountLenghtDb";
+import { toast } from "react-toastify";
 
 const AddOrUpdateFeeSlab = ({
   isUpdateOn,
@@ -100,13 +101,23 @@ const AddOrUpdateFeeSlab = ({
       console.log("pppp");
       const response = await updateFeeSlabToDatabase(DocId, feeSlabData);
 
-      setConfirmationMessage(response.message);
-      setFeeSlabData(inticalData);
-      setTimeout(() => {
+      if (response.status) {
+  
+        setFeeSlabData(inticalData);
+    
+          setConfirmationMessage(null);
+          setIsModalOpen(false);
+          handleFeeSlabUpdated();
+          toast.success(response.message);
+      }
+      if (!response.status) {
+        setFeeSlabData(inticalData);
         setConfirmationMessage(null);
         setIsModalOpen(false);
-        handleFeeSlabUpdated();
-      }, 2000);
+        toast.error(response.message);
+      }
+     
+
     } catch (error) {
       console.error("Error updating subject data", error);
     }
@@ -117,17 +128,22 @@ const AddOrUpdateFeeSlab = ({
       feeSlabData.slabId = slabId;
       const response = await addFeeSlabToDb(feeSlabData);
 
-      setConfirmationMessage(response.message);
-
+      if (response.status) {
       setFeeSlabData(inticalData);
+      setIsModalOpen(false);
+      handleFeeSlabAdded();
+      toast.success(response.message);
+      }
+      if (!response.status) {
+        setFeeSlabData(inticalData);
+        setIsModalOpen(false);
+        toast.error(response.message);
+      }
+
     } catch (error) {
       console.error("Error updating subject data", error);
     }
-    setTimeout(() => {
-      setConfirmationMessage(null);
-      setIsModalOpen(false);
-      handleFeeSlabAdded();
-    }, 2000);
+
   };
 
   if (!isModalOpen) return null;

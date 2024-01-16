@@ -66,6 +66,11 @@ const AddVehicle = () => {
       setShowDeleteAlert(false);
       toast.success(response.message);
     }
+    if(!response.status){
+      setDocId(null);
+      setShowDeleteAlert(false);
+      toast.error(response.message);
+    }
   };
 
   const onCancel = () => {
@@ -80,17 +85,17 @@ const AddVehicle = () => {
   };
 
   const handleVehicleAdded = () => {
-    setTimeout(() => {
+
       setDataChanged(true);
-    }, 2000);
+
   };
 
   const handleVehicleUpdated = () => {
     setVehicleUpdate(true);
-    setTimeout(() => {
+
       setVehicleUpdate(false);
       setDataChanged(true);
-    }, 2000); // Hide the message after 2 seconds
+
   };
 
   return (

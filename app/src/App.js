@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./Components/Navbar";
 import Home from "./Pages/Home/Home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -40,16 +40,34 @@ import Reports from "./Pages/Reports/Reports.js";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isSearchResultPage, setIsSearchResultPage] = useState(false);
+
+  useEffect(() => {
+    const handleUrlChange = () => {
+      setIsSearchResultPage(window.location.pathname.startsWith("/searchresult/"));
+    };
+  
+    // Initial check
+    handleUrlChange();
+  
+    // Add event listener for URL changes
+    window.addEventListener("popstate", handleUrlChange);
+  
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("popstate", handleUrlChange);
+    };
+  }, []);
 
   return (
     <UserProvider>
       <BrowserRouter>
         <div className="flex flex-col">
-          {isAuthenticated && (
+        {isAuthenticated && (
             <Navbar setIsAuthenticated={setIsAuthenticated} />
           )}
           <div className="flex">
-            {isAuthenticated && <Sidebar />}
+          {isAuthenticated && !isSearchResultPage && <Sidebar />}
             <Routes>
               {!isAuthenticated && (
                 <Route
@@ -59,6 +77,14 @@ const App = () => {
                   }
                 />
               )}
+              {
+                isAuthenticated && (
+                  <Route
+                    path="/searchresult/:id"
+                    element={<SearchDetailsShow />}
+                  />
+                )
+              }
               {isAuthenticated && (
                 <>
                   <Route path="/home" element={<Home />} />
@@ -120,7 +146,7 @@ const App = () => {
                     element={<AddFeeSlab />}
                   />
                   <Route
-                    path="/transport-master/add-vehciles"
+                    path="/transport-master/add-vehicles"
                     element={<AddVehicle />}
                   />
                   <Route
@@ -159,10 +185,7 @@ const App = () => {
                     path="/exam-addition/add-exam"
                     element={<AddExams />}
                   />
-                  <Route
-                    path="/searchresult/:id"
-                    element={<SearchDetailsShow />}
-                  />
+                  
                   <Route
                     path="/core-functions/core-settings"
                     element={<CoreSettings />}

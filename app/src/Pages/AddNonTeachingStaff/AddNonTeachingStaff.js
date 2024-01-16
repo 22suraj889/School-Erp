@@ -66,6 +66,11 @@ const AddNonTeachingStaff = () => {
       toast.success(response.message);
 
     }
+    if(!response.status){
+      setDocId(null);
+      setShowDeleteAlert(false);
+      toast.error(response.message);
+    }
   };
 
   const onCancel = () => {

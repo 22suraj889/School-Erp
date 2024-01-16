@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useSearchParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import "./Sidebar.css";
 
@@ -33,11 +33,22 @@ const DropdownLink = styled(Link)`
   font-size: 18px;
 `;
 
-const SubMenu = ({ item }) => {
+const SubMenu = ({ item,listOfSubMenuOpen, setListOfSubMenuOpen }) => {
   const [subnav, setSubnav] = useState(false);
   const [active, setActive] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    // Close the submenu when the location changes
+    if (!listOfSubMenuOpen.includes(item.title)) {
+      setSubnav(false);
+      setActive(false);
+    }
+  }, [location, listOfSubMenuOpen, item.title]);
+
 
   const showSubnav = () => {
+    setListOfSubMenuOpen([item.title])
     setSubnav(!subnav);
     setActiveStatus();
   };
@@ -69,7 +80,7 @@ const SubMenu = ({ item }) => {
           return (
             <DropdownLink to={item.path} key={index}>
               {item.icon}
-              <SidebarLabel>{item.title}</SidebarLabel>
+              <SidebarLabel className={location.pathname === item.path ? "activeSubM" : ""}>{item.title}</SidebarLabel>
             </DropdownLink>
           );
         })}

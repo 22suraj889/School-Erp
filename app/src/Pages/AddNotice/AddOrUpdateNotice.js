@@ -3,6 +3,7 @@ import Modal from "../../Components/Modal";
 import Alert from "@mui/material/Alert";
 import "../AddTeacher/AddTeacherForm.css";
 import { addNoticeToDatabase } from "../../api/AddNotice/AddNotice";
+import { toast } from "react-toastify";
 
 const AddOrUpdateNoticeForm = ({
   isUpdateOn,
@@ -46,18 +47,22 @@ const AddOrUpdateNoticeForm = ({
       const response = await addNoticeToDatabase(noticeData);
 
       // Show a confirmation message
-      setConfirmationMessage(response.message);
+      if(response.status){
+        setNoticeData(inticalData);
+        setConfirmationMessage(null);
+        setIsModalOpen(false);
+        handleNoticeAdded();
+        toast.success(response.message);
+      }
+      if(!response.status){
+        setNoticeData(inticalData);
+        setIsModalOpen(false);
+        toast.error(response.message);
+      }
 
-      setNoticeData(inticalData);
     } catch (error) {
       console.error("Error updating subject data", error);
     }
-
-    setTimeout(() => {
-      setConfirmationMessage(null);
-      setIsModalOpen(false);
-      handleNoticeAdded();
-    }, 2000); // Hide the message after 2 seconds
   };
 
   if (!isModalOpen) return null;
@@ -100,7 +105,7 @@ const AddOrUpdateNoticeForm = ({
               </label>
               <input
                 type="text"
-                name="noticeTo"
+                name="noticeSubject"
                 value={noticeData.noticeSubject}
                 onChange={handleInputChange}
                 className="mt-1 p-2 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"

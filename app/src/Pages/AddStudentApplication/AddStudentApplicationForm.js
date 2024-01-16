@@ -62,26 +62,47 @@ const [checked, setChecked] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const response = await addStudentByApplicationToDatabase(formData);
-
     console.log(response);
-    setIsModalOpen(false);
-    toast.success(response.message);
-    setFormData({
-      applicationNo: "",
-      firstName: "",
-      lastName: "",
-      mobileNo: "",
-      joiningClass: "",
-      dob: "",
-      previousschoolTCNo: "",
-      applicationFees: "",
-      paymentmode: "",
-      upitransactionNo: "",
-      aadharNo: "",
-      feeSlabApplingFor: "",
-    });
+    
+      if(response.status === true){
+      console.log(response);
+      setIsModalOpen(false);
+      toast.success(response.message);
+      setFormData({
+        applicationNo: "",
+        firstName: "",
+        lastName: "",
+        mobileNo: "",
+        joiningClass: "",
+        dob: "",
+        previousschoolTCNo: "",
+        applicationFees: "",
+        paymentmode: "",
+        upitransactionNo: "",
+        aadharNo: "",
+        feeSlabApplingFor: "",
+      });
+    }
+
+      if(response.status === false){
+      setIsModalOpen(false);
+      toast.error(response.message);
+      setFormData({
+        applicationNo: "",
+        firstName: "",
+        lastName: "",
+        mobileNo: "",
+        joiningClass: "",
+        dob: "",
+        previousschoolTCNo: "",
+        applicationFees: "",
+        paymentmode: "",
+        upitransactionNo: "",
+        aadharNo: "",
+        feeSlabApplingFor: "",
+      });}
+
   };
 
   if (!isModalOpen) return null;

@@ -53,16 +53,19 @@ const AddOrUpdateUsersForm = ({
   const handleUpdate = async () => {
     try {
       const response = await updateSpecificUser(DocId, expenseData);
-
-      setConfirmationMessage(response.message);
+      if(response.status){
       toast.success(response.message);
+      }
+      if(!response.status){
+        toast.error(response.message);
+      }
       setExpenseData(inticalData);
 
-      setTimeout(() => {
+   
         setConfirmationMessage(null);
         setIsModalOpen(false);
         handleExpenseUpdated();
-      }, 2000);
+ 
     } catch (error) {
       console.error("Error updating subject data", error);
     }
@@ -73,16 +76,21 @@ const AddOrUpdateUsersForm = ({
       const response = await signupAdminUser(expenseData);
       // Show a confirmation message
       setConfirmationMessage(response.message);
+      if(!response.status){
+        toast.error(response.message);
+      }
+      if(response.status){
       toast.success(response.message);
+      }
       setExpenseData(inticalData);
     } catch (error) {
       console.error("Error updating subject data", error);
     }
-    setTimeout(() => {
+
       setConfirmationMessage(null);
       setIsModalOpen(false);
       handleExpenseAdded();
-    }, 2000);
+
   };
 
   if (!isModalOpen) return null;
