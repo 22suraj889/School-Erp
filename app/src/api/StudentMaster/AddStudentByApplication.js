@@ -26,7 +26,7 @@ export const addStudentByApplicationToDatabase = async (studentData) => {
     if (!querySnapshot.empty) {
         return { status: false, message: "student with the same studentId already exists" };
     }
-   // Create a reference to the document with the sectionName as docId 
+
     const studentDocRef = doc(studentRef, studentData?.applicationNo);
 
     try {
@@ -146,3 +146,62 @@ export const getApplicantStudentDataFromDd = async (DocId) => {
         console.error(error);
     }
 };
+
+
+
+// export const addStudentDirectlyToDatabase = async (studentData) => {
+//     const studentRef = collection(db, "AddStudentsDirectly");
+  
+//      const querySnapshot = await getDocs(query(studentRef, where("studentId", "==", studentData.studentId)));
+  
+//      if (!querySnapshot.empty) {
+//          return { status: false, message: "student with the same studentId already exists" };
+//      }
+//     const studentDocRef = doc(studentRef,studentData?.studentId);
+  
+//     try {
+//       const profilePicRef = ref(
+//         storage,
+//         `addStudentDirectly/profile_pics/${studentData.studentId}`
+//       );
+//     if (studentData.profilePic) {
+//       await uploadString(profilePicRef, studentData.profilePic, "data_url");
+      
+//     } else {
+    
+      
+//     }
+//   } catch (error) {
+//     console.error("Error uploading profile picture to storage:", error);
+//     return {
+//       status: false,
+//       message: "Error uploading profile picture",
+//     };
+//   }
+  
+//   const profilePicUrl = await getDownloadURL(
+//     ref(storage, `addStudentDirectly/profile_pics/${studentData.studentId}`)
+//   );
+  
+  
+  
+  
+//     try {
+//       const studentDoc = await setDoc(studentDocRef, {
+//         firstName: studentData.firstName,
+//         lastName: studentData.lastName,
+//         studentId: studentData.studentId,
+//         mobileNo: studentData.mobileNo,
+//         transportSlab: studentData.transportSlab,
+//         profilePic: profilePicUrl ? profilePicUrl: "",
+//         admissionDate: studentData.admissionDate,
+//         joiningClass: studentData.joiningClass,
+//         feeslab: studentData?.feeslab,
+//         personalDetails: studentData?.personalDetails,
+//         addressDetails: studentData?.addressDetails,
+//         takeAdmissionfees: studentData?.takeAdmissionfees,
+//         demography: studentData?.demography,
+//         studentHistory: studentData?.studentHistory,
+//         optionalSubjects: studentData?.optionalSubjects,
+//         createdAt: serverTimestamp(),
+//       });
