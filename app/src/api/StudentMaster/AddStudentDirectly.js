@@ -418,3 +418,35 @@ export const assignStudentsToSections = async (sectionLimits, studentsList) => {
   }
 };
 
+export const getStudentsWithBirthdayToday = async () => {
+  try {
+    const currentDate = new Date();
+    const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+
+      const studentsRef = collection(db, 'AddStudentsDirectly');
+    const querySnapshot = await getDocs(
+      query(studentsRef, where('personalDetails.dob', '==', "2024-01-10"))
+    );
+
+
+    const students = [];
+    querySnapshot.forEach((doc) => {
+      const studentData = doc.data();
+      const { firstName, lastName, joiningClass, studentId, joiningSection } = studentData;
+
+      students.push({
+        "Full Name": `${firstName} ${lastName}`,
+        "Student Id": studentId,
+        "Class": joiningClass,
+        "Sec": joiningSection ?? "N/A",
+      });
+    });
+
+    return students;
+
+  } catch (error) {
+    console.error('Error retrieving students:', error);
+    return { status: false, message: "Error retrieving students' details" };
+  }
+};
+
