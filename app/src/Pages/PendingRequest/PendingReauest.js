@@ -13,6 +13,7 @@ import AlertComponent from "../../Components/AlertComponent.js";
 import { addStudentDirectlyToDatabase } from "../../api/StudentMaster/AddStudentDirectly.js";
 import AddOrUpdateStudentForm from "../AddStudentsDirectly/AddOrUpdateStudentForm .js";
 import "../../App.css";
+import { calculateCollectionLength } from "../../api/CountLenghtDb.js";
 
 const PendingRequest = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,8 +22,10 @@ const PendingRequest = () => {
   const [dataChanged, setDataChanged] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [docId, setDocId] = useState("");
+  const [studentId, setStudentId] = useState(
+    `St${Math.floor(Math.random() * 900) + 100}`
+  );
   const [alertmsg, setAlertmsg] = useState(false);
-  const navigate = useNavigate();
 
   const fetchData = () => {
     getApplicantStudentFromDatabase()
@@ -39,6 +42,7 @@ const PendingRequest = () => {
 
   useEffect(() => {
     fetchData();
+    getRandomId();
   }, []);
 
   if (dataChanged) {
@@ -63,6 +67,23 @@ const PendingRequest = () => {
     }
   };
 
+  const getRandomId = async () => {
+    const length = await calculateCollectionLength("AddStudentsDirectly");
+    if (length === -1 || length === null) {
+      setStudentId(`St${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->", studentId);
+    } else {
+      const formattedId =
+        length + 1 < 10
+          ? `St00${length + 1}`
+          : length + 1 < 1000
+          ? `St0${length + 1}`
+          : `S${length + 1}`;
+      setStudentId(formattedId);
+      console.log("idsub->", studentId);
+    }
+  };
+
   const onConfirm = async () => {
     if (alertmsg) {
       const response = await deleteStudent(docId);
@@ -71,8 +92,7 @@ const PendingRequest = () => {
         setDocId(null);
         setDataChanged(true);
         toast.success(response.message);
-      }
-      else if(!response.status){
+      } else if (!response.status) {
         setDocId(null);
         toast.error(response.message);
       }
@@ -96,6 +116,8 @@ const PendingRequest = () => {
         lastName,
         mobileNo,
         joiningClass,
+        studentId,
+        profilePic: null,
 
         personalDetails: {
           dob,
@@ -118,6 +140,7 @@ const PendingRequest = () => {
       console.log("Delete document:", deleted);
 
       const res = await addStudentDirectlyToDatabase(studentDataObject);
+      console.log(res);
       console.log(res.docId);
       setDocId(res?.docId);
       setIsModalOpen(true);
