@@ -14,6 +14,7 @@ import {
 } from "../../api/ClassMaster/AddClassAndSection";
 import { toast } from "react-toastify";
 import { calculateCollectionLength } from "../../api/CountLenghtDb";
+import { RxCross2 } from "react-icons/rx";
 
 const AddOrUpdateTeacherForm = ({
   isUpdateOn,
@@ -84,7 +85,7 @@ const AddOrUpdateTeacherForm = ({
   };
 
   const [teacherData, setTeacherData] = useState(inticalteacherData);
-  const [teacherId,setTeachertId] = useState("")
+  const [teacherId, setTeachertId] = useState("");
   const [error, setError] = useState(false);
   const [transportOptions, setTransportOptions] = useState([]);
   const [activeCom, setActiveCom] = useState(1);
@@ -92,10 +93,10 @@ const AddOrUpdateTeacherForm = ({
   const [subjectsName, setSubjectsName] = useState([]);
   const [singleClassName, setSingleClassName] = useState("");
   const [sectionName, setSectionName] = useState([]);
+  const [selectedClasses, setSelectedClasses] = useState([]);
 
   useEffect(() => {
     if (isModalOpen && isUpdateOn) {
-
       getTeacherData(DocId);
     }
     getTransportSlabs();
@@ -110,18 +111,19 @@ const AddOrUpdateTeacherForm = ({
     });
   };
 
-  const getRandomId = async()=>{
+  const getRandomId = async () => {
     const length = await calculateCollectionLength("AddTeachers");
-    console.log("length->",length);
+    console.log("length->", length);
     if (length === -1) {
       setTeachertId(`T${Math.floor(Math.random() * 900) + 100}`);
-      console.log("idsub->",teacherId)
+      console.log("idsub->", teacherId);
     } else {
-      const formattedId = length + 1 < 10 ? `T0${length + 1}` : `T00${length + 1}`;
+      const formattedId =
+        length + 1 < 10 ? `T0${length + 1}` : `T00${length + 1}`;
       setTeachertId(formattedId);
-      console.log("idsub->",teacherId)
+      console.log("idsub->", teacherId);
     }
-  }
+  };
 
   const getSubjectNames = async (className) => {
     console.log(className);
@@ -236,7 +238,38 @@ const AddOrUpdateTeacherForm = ({
       setSingleClassName(teacherData.assignClasses.class);
       getSubjectNames(teacherData.assignClasses.class);
     }
+    if (name === "class") {
+      if (value !== "") {
+        setSingleClassName(value);
+        getSubjectNames(value);
+      }
+    }
+
+    // Check if both class and subject are selected before adding to the array
+    if (
+      name === "subject" &&
+      value !== "" &&
+      teacherData.assignClasses.class !== ""
+    ) {
+      const newItem = `${teacherData.assignClasses.class}-${value}`;
+      setSelectedClasses((prevSelectedClasses) => [
+        ...prevSelectedClasses,
+        newItem,
+      ]);
+    }
   };
+
+  const handleRemoveFromSelectedClasses = (index) => {
+    // Create a copy of the selectedClasses array
+    const updatedSelectedClasses = [...selectedClasses];
+
+    // Remove the item at the specified index
+    updatedSelectedClasses.splice(index, 1);
+
+    // Update the state with the new array
+    setSelectedClasses(updatedSelectedClasses);
+  };
+
   const handleUpdate = async () => {
     try {
       const response = await updateTeacherInDatabase(DocId, teacherData);
@@ -245,7 +278,6 @@ const AddOrUpdateTeacherForm = ({
       handleTeacherUpdated();
       setTeacherData(inticalteacherData);
       toast.success(response.message);
-    
     } catch (error) {
       console.error("Error updating teacher data", error);
     }
@@ -402,8 +434,9 @@ const AddOrUpdateTeacherForm = ({
             <div className="form-first w-[200px]">
               <label
                 htmlFor="fileInput"
-                className={`mt-1 p-2 w-half text-[20px] font-bold block h-[200px] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-center ${teacherData.profilePic ? "cursor-pointer" : ""
-                  }`}
+                className={`mt-1 p-2 w-half text-[20px] font-bold block h-[200px] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-center ${
+                  teacherData.profilePic ? "cursor-pointer" : ""
+                }`}
                 style={{ color: "#333333" }}
               >
                 {teacherData.profilePic ? (
@@ -909,47 +942,68 @@ const AddOrUpdateTeacherForm = ({
                 </div>
               </div>
             </div>
-            <div className={activeCom === 5 ? "component-card" : "hidden-card"}>
-              <div className="form-first">
-                <div>
-                  <label className="block text-[18px] font-medium text-[#333333]">
-                    Select Class*
-                  </label>
-                  <select
-                    name="class"
-                    value={teacherData.assignClasses.class}
-                    onChange={handleInputChange5}
-                    required
-                    className="mt-1 p-2 block w-[47%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  >
-                    <option value="">--- Select ---</option>
-                    {className.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+            <div
+              className={
+                activeCom === 5
+                  ? "component-card flex-col items-start gap-[50px]"
+                  : "hidden-card"
+              }
+            >
+              <div className="selected-classes-list">
+                {selectedClasses.map((item, index) => (
+                  <div key={index} className="selected-class-item flex gap-2">
+                    <span>{item}</span>
+                    <button
+                      onClick={() => handleRemoveFromSelectedClasses(index)}
+                      className="remove-button bg-red-500 text-white px-2 py-1"
+                    >
+                      <RxCross2 />
+                    </button>
+                  </div>
+                ))}
               </div>
-              <div className="form-first">
-                <div>
-                  <label className="block text-[18px] font-medium text-[#333333]">
-                    Select Subject*
-                  </label>
-                  <select
-                    name="subject"
-                    value={teacherData.assignClasses.subject}
-                    onChange={handleInputChange5}
-                    required
-                    className="mt-1 p-2 block w-[47%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  >
-                    <option value="">--- Select ---</option>
-                    {subjectsName.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+              <div className="flex gap-[40px]">
+                <div className="form-first">
+                  <div>
+                    <label className="block text-[18px] font-medium text-[#333333]">
+                      Select Class*
+                    </label>
+                    <select
+                      name="class"
+                      value={teacherData.assignClasses.class}
+                      onChange={handleInputChange5}
+                      required
+                      className="mt-1 p-2 block w-[47%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                      <option value="">--- Select ---</option>
+                      {className.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="form-first">
+                  <div>
+                    <label className="block text-[18px] font-medium text-[#333333]">
+                      Select Subject*
+                    </label>
+                    <select
+                      name="subject"
+                      value={teacherData.assignClasses.subject}
+                      onChange={handleInputChange5}
+                      required
+                      className="mt-1 p-2 block w-[47%] border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                      <option value="">--- Select ---</option>
+                      {subjectsName.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -973,7 +1027,6 @@ const AddOrUpdateTeacherForm = ({
             </button>
           </div>
         </form>
-
       </div>
     </Modal>
   );
