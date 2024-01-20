@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { FaSearch } from "react-icons/fa";
 import { GoArrowUpLeft } from "react-icons/go";
 
-function SearchComponent() {
+function SearchComponent() { 
   const [searchTerm, setSearchTerm] = useState("");
   const [show, setShow] = useState(false);
   const [searchResults, setSearchResults] = useState({

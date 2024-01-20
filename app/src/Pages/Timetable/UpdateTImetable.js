@@ -173,8 +173,8 @@ const UpdateTimetable = ({
               </label>
               <input
                 readOnly={isEditOn}
-                type="text"
-                rows="6"
+                type="time"
+                pattern="^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$"
                 placeholder="HH:MM am/pm"
                 name="startTime"
                 value={dataToShowforthiscomponent?.startTime}
@@ -192,9 +192,9 @@ const UpdateTimetable = ({
               </label>
               <input
                 readOnly={isEditOn}
-                type="text"
+                type="time"
+                pattern="^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$"
                 placeholder="HH:MM am/pm"
-                rows="6"
                 name="endTime"
                 value={dataToShowforthiscomponent?.endTime}
                 onChange={handleInputChange}

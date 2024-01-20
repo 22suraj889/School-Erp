@@ -4,12 +4,14 @@ import "../Pages/PutAttendance/PutAttendancs.css";
 import { CiSearch } from "react-icons/ci";
 import { CiCircleInfo } from "react-icons/ci";
 import "./DynamicTable.css";
+import debounce from "lodash/debounce";
 import {
   getAttendanceList,
   storeStaffAttendance,
 } from "../api/StaffAttendance/StaffAttendance";
 import { toast } from "react-toastify";
 import "./Sidebar.css"
+import { searchUser } from "../api/TeacherMaster/AddTeacher";
 
 const DatePicker = ({ minDate, maxDate }) => {
   const monthNames = [
@@ -57,7 +59,36 @@ const DatePicker = ({ minDate, maxDate }) => {
   const [attendanceList, setAttendanceList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [attendanceData, setAttendanceData] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
 
+
+  const debouncedSearch = debounce(async (term) => {
+    const result = await searchUser(term);
+    console.log(result)
+    // const trimmedTerm = term.trim();
+    // const lowercaseTerm = trimmedTerm.toLowerCase();
+    // const results = await searchUser(lowercaseTerm);
+    // setShow(true);
+    // setAttendanceData(results);
+    // try {
+    //   const trimmedTerm = term.trim();
+    //   if (trimmedTerm.length >= 2) {
+    //     const lowercaseTerm = trimmedTerm.toLowerCase();
+    //     const results = await searchUser(lowercaseTerm);
+    //     setShow(true);
+    //     setAttendanceData(results);
+    //   }
+    // } catch (error) {
+    //   console.error("Error:", error);
+    //   toast.error("Error Searching data");
+    // }
+  }, 100);
+
+  const handleSearch = (event) => {
+    const term = event.target.value;
+    setSearchTerm(term);
+    debouncedSearch(term);
+  }
 
   const formatToYYYYMMDD = (date) => {
     const year = date.getFullYear();
@@ -329,6 +360,8 @@ const DatePicker = ({ minDate, maxDate }) => {
                 className="search-teacher-input"
                 type="text"
                 placeholder="Search Teacher"
+                value={searchTerm}
+                onChange={handleSearch}
               />
               <CiSearch className="search-icon-teacher" />
             </div>
