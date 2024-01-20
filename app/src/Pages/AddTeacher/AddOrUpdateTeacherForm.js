@@ -115,11 +115,10 @@ const AddOrUpdateTeacherForm = ({
     const length = await calculateCollectionLength("AddTeachers");
     console.log("length->", length);
     if (length === -1) {
-      setTeachertId(`T${Math.floor(Math.random() * 900) + 100}`);
-      console.log("idsub->", teacherId);
+      setTeachertId(`Th${Math.floor(Math.random() * 900) + 100}`);
+      console.log("idsub->",teacherId)
     } else {
-      const formattedId =
-        length + 1 < 10 ? `T0${length + 1}` : `T00${length + 1}`;
+      const formattedId = length + 1 < 10 ? `Th0${length + 1}` : `Th00${length + 1}`;
       setTeachertId(formattedId);
       console.log("idsub->", teacherId);
     }

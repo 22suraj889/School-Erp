@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Birthdays from "../../Database/Birthday";
 import DynamicTable from "../../Components/DynamicTable";
 import Attendance from "../../Database/Attendance";
-import expense from "../../Database/MontlyExpense.js";
 import fees from "../../Database/Totalfee.js";
 import "./Home.css";
 import BarGraph from "../../Components/BarGraph";
@@ -10,7 +8,42 @@ import BarGraphData from "../../Database/BarGraphData";
 import PieGraph from "../../Components/PieGraph";
 import { useUser } from "../../Context/UserAuthContext.js";
 import TableTitle from "../../Components/TableTitle.js"
+import { getExpenseDataFromDatabase } from "../../api/ExpenseAdding/AddExpense.js";
+import { getStudentsWithBirthdayToday } from "../../api/StudentMaster/AddStudentDirectly.js";
 const Home = () => {
+
+
+  const [expensesData, setExpensesData] = useState([]);
+  const [birthdaysData, setBirthdaysData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+
+  const fetchBirthdaysData = () => {
+    getStudentsWithBirthdayToday()
+      .then((data) => {
+        setBirthdaysData(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setIsLoading(false);
+      });
+  };
+
+  const fetchExpenseData = () => {
+    getExpenseDataFromDatabase()
+      .then((data) => {
+        setExpensesData(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setIsLoading(false);
+      });
+  };
+
+
+
   const [attendanceBarGraphData, setAttendanceBarGraphData] = useState({
     labels: BarGraphData.map((data) => data.class),
     datasets: [
@@ -24,19 +57,7 @@ const Home = () => {
     ],
   });
 
-  // Pie Chart
-  const [expenseData, setExpenseData] = useState({
-    labels: ["Expense", "Income"],
-    datasets: [
-      {
-        label: "Expense",
-        data: [2000, 14000],
-        backgroundColor: ["red", "#50AF95"],
-        borderColor: "black",
-        borderWidth: 1,
-      },
-    ],
-  });
+ 
 
   // Access user data from the context
   const { userData } = useUser();
@@ -44,6 +65,9 @@ const Home = () => {
   // Log user data when it changes
   useEffect(() => {
     console.log("User Data:", userData);
+    fetchBirthdaysData();
+    fetchExpenseData();
+
   }, [userData]);
 
   return (
@@ -52,7 +76,7 @@ const Home = () => {
         <div className="birthdays-table">
           <TableTitle title={" Today's Birthday's"} />
           <DynamicTable
-            data={Birthdays}
+            data={birthdaysData}
             rowHeight={8}
             action={false}
             ispanding={false}
@@ -88,7 +112,7 @@ const Home = () => {
         <TableTitle title={' Monthly Expense'} />
 
           <DynamicTable
-            data={expense}
+            data={expensesData}
             rowHeight={8}
             action={false}
             ispanding={false}

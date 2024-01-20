@@ -99,27 +99,33 @@ export const addStudentDirectlyToDatabase = async (studentData) => {
    if (!querySnapshot.empty) {
        return { status: false, message: "student with the same studentId already exists" };
    }
-  // Create a reference to the document with the sectionName as docId
+
   const studentDocRef = doc(studentRef,studentData?.studentId);
 
 
-  try {
-    const profilePicRef = ref(
-      storage,
-      `addStudentDirectly/profile_pics/${studentData.studentId}`
-    );
-    await uploadString(profilePicRef, studentData.profilePic, "data_url");
-  } catch (error) {
-    console.error("Error uploading profile picture to storage:", error);
-    return {
-      status: false,
-      message: "Error uploading profile picture",
-    };
+  if (studentData.profilePic !== null) {
+    try {
+      const profilePicRef = ref(
+        storage,
+        `addStudentDirectly/profile_pics/${studentData.studentId}`
+      );
+      await uploadString(profilePicRef, studentData.profilePic, "data_url");
+    } catch (error) {
+      console.error("Error uploading profile picture to storage:", error);
+      return {
+        status: false,
+        message: "Error uploading profile picture",
+      };
+    }
   }
 
-  const profilePicUrl = await getDownloadURL(
-    ref(storage, `addStudentDirectly/profile_pics/${studentData.studentId}`)
-  );
+  const profilePicUrl = studentData.profilePic
+      ? await getDownloadURL(ref(storage, `addStudentDirectly/profile_pics/${studentData.studentId}`))
+      : ''; 
+
+    const currentDate = new Date();
+    const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+    console.log(formattedCurrentDate);
 
   try {
     const studentDoc = await setDoc(studentDocRef, {
@@ -127,11 +133,11 @@ export const addStudentDirectlyToDatabase = async (studentData) => {
       lastName: studentData.lastName,
       studentId: studentData.studentId,
       mobileNo: studentData.mobileNo,
-      transportSlab: studentData.transportSlab,
-      profilePic: profilePicUrl,
-      admissionDate: studentData.admissionDate,
+      transportSlab: studentData.transportSlab??'',
+      profilePic: studentData.profilePic ? profilePicUrl : 'Null',
+      admissionDate: studentData.admissionDate??formattedCurrentDate,
       joiningClass: studentData.joiningClass,
-      feeslab: studentData?.feeslab,
+      feeslab: studentData?.feeslab??'Regular',
       personalDetails: studentData?.personalDetails,
       addressDetails: studentData?.addressDetails,
       takeAdmissionfees: studentData?.takeAdmissionfees,
@@ -142,7 +148,10 @@ export const addStudentDirectlyToDatabase = async (studentData) => {
     });
 
     console.log("Data added successfully");
+    const docId = studentDocRef.id;
+
     return {
+      docId: docId,
       status: true,
       message: "Student added in Database successfully",
     };
@@ -406,6 +415,38 @@ export const assignStudentsToSections = async (sectionLimits, studentsList) => {
   } catch (error) {
     console.error("Error updating students' sections:", error);
     return { status: false, message: "Error updating students' sections" };
+  }
+};
+
+export const getStudentsWithBirthdayToday = async () => {
+  try {
+    const currentDate = new Date();
+    const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+
+      const studentsRef = collection(db, 'AddStudentsDirectly');
+    const querySnapshot = await getDocs(
+      query(studentsRef, where('personalDetails.dob', '==', "2024-01-10"))
+    );
+
+
+    const students = [];
+    querySnapshot.forEach((doc) => {
+      const studentData = doc.data();
+      const { firstName, lastName, joiningClass, studentId, joiningSection } = studentData;
+
+      students.push({
+        "Full Name": `${firstName} ${lastName}`,
+        "Student Id": studentId,
+        "Class": joiningClass,
+        "Sec": joiningSection ?? "N/A",
+      });
+    });
+
+    return students;
+
+  } catch (error) {
+    console.error('Error retrieving students:', error);
+    return { status: false, message: "Error retrieving students' details" };
   }
 };
 

@@ -51,10 +51,10 @@ const AddOrUpdateDriverForm = ({
     const length = await calculateCollectionLength("AddDriver");
     console.log("length->",length);
     if (length === -1) {
-      setDriverId(`D${Math.floor(Math.random() * 900) + 100}`);
+      setDriverId(`Dri${Math.floor(Math.random() * 900) + 100}`);
       console.log("idsub->",driveId)
     } else {
-      const formattedId = length + 1 < 10 ? `D0${length + 1}` : `D00${length + 1}`;
+      const formattedId = length + 1 < 10 ? `Dri0${length + 1}` : `Dri00${length + 1}`;
       setDriverId(formattedId);
       console.log("idsub->",driveId)
     }

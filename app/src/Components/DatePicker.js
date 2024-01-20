@@ -57,7 +57,7 @@ const DatePicker = ({ minDate, maxDate }) => {
   const [attendanceList, setAttendanceList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [attendanceData, setAttendanceData] = useState({});
-  
+
 
   const formatToYYYYMMDD = (date) => {
     const year = date.getFullYear();
@@ -116,27 +116,64 @@ const DatePicker = ({ minDate, maxDate }) => {
   };
 
   const handleSelectedDate = async (event) => {
-    if(!isPastDate(currentYear, currentMonth, event.target.getAttribute("data-day"))){
-    setIsButtonDisabled(true);
-    if (event.target.id === "day") {
-      const selectedDay = event.target.getAttribute("data-day");
-      const newSelectedDate = new Date(currentYear, currentMonth, selectedDay);
+    if (!isPastDate(currentYear, currentMonth, event.target.getAttribute("data-day"))) {
+      setIsButtonDisabled(true);
+      if (event.target.id === "day") {
+        const selectedDay = event.target.getAttribute("data-day");
+        const newSelectedDate = new Date(currentYear, currentMonth, selectedDay);
 
-      setSelectedDate(newSelectedDate);
-      setIsLoading(true);
-      fetchAttendanceList(newSelectedDate);
+        setSelectedDate(newSelectedDate);
+        setIsLoading(true);
+        fetchAttendanceList(newSelectedDate);
+      }
     }
-  }
   };
 
   const getTimeFromState = (_day) => {
     return new Date(currentYear, currentMonth, _day).getTime();
   };
 
-  const handleAction = async (actionType, staffId) => {
-    if(!isPastMonth(currentYear, currentMonth)){
-    setIsButtonDisabled(false);
-      setAttendanceData( async (attendanceData) =>  {
+  // const handleAction = async (actionType, staffId) => {
+  //   if(!isPastMonth(currentYear, currentMonth)){
+  //   setIsButtonDisabled(false);
+  //     setAttendanceData( async (attendanceData) =>  {
+  //       const updatedStaffArray = attendanceData.staffArray.map((staff) => {
+  //         if (staff.staffid === staffId) {
+  //           return {
+  //             ...staff,
+  //             isPresent: !staff.isPresent, // Toggle the isPresent value
+  //           };
+  //         }
+  //         return staff;
+  //       });
+
+  //       const updatedAttendanceList = attendanceList?.map((entry) => {
+  //         if (entry.EmpId === staffId) {
+  //           return {
+  //             ...entry,
+  //             Status: !entry.Status,
+  //           };
+  //         }
+  //         return entry;
+  //       });
+
+
+  //       setAttendanceList(updatedAttendanceList);
+  //       await handleSaveAttendence()
+  //       return {
+  //         ...attendanceData,
+  //         staffArray: updatedStaffArray,
+  //       };
+  //     });
+  //   }
+  // };
+
+  const handleAction = async (staffId) => {
+    if (!isPastMonth(currentYear, currentMonth)) {
+      setIsButtonDisabled(false);
+
+      // Update the local state first
+      setAttendanceData((attendanceData) => {
         const updatedStaffArray = attendanceData.staffArray.map((staff) => {
           if (staff.staffid === staffId) {
             return {
@@ -147,33 +184,50 @@ const DatePicker = ({ minDate, maxDate }) => {
           return staff;
         });
 
-        const updatedAttendanceList = attendanceList.map((entry) => {
-          if (entry.EmpId === staffId) {
-            return {
-              ...entry,
-              Status: !entry.Status,
-            };
-          }
-          return entry;
-        });
-
-        
-        setAttendanceList(updatedAttendanceList);
-        await handleSaveAttendence()
         return {
           ...attendanceData,
           staffArray: updatedStaffArray,
         };
       });
+
+      // Then make the API call to update the backend
+      await handleSaveAttendance(staffId);
     }
   };
 
-  const handleSaveAttendence = async () => {
-    
-    console.log("att",attendanceData)
-    const response = await storeStaffAttendance(attendanceData);
-    console.log(response.message);
+  const handleSaveAttendance = async (selectedStaffId) => {
+    // Filter out only the selected staff member
+    const selectedStaff = attendanceData.staffArray.find(
+      (staff) => staff.staffid === selectedStaffId
+    );
+
+    if (selectedStaff) {
+      console.log("Selected staff data:", selectedStaff);
+
+      try {
+        // Create a new object with only the selected staff
+        const selectedStaffData = {
+          staffArray: [selectedStaff],
+          date: attendanceData.date,
+        };
+
+        // Make the API call with the filtered data
+        const response = await storeStaffAttendance(selectedStaffData);
+        console.log("API response:", response.message);
+        // Optionally handle success or inform the user
+      } catch (error) {
+        console.error("Error saving attendance:", error);
+        // Handle error or inform the user
+      }
+    }
   };
+
+  // const handleSaveAttendence = async () => {
+
+  //   console.log("att",attendanceData)
+  //   const response = await storeStaffAttendance(attendanceData);
+  //   console.log(response.message);
+  // };
 
   const isPastDate = (year, month, day) => {
     const currentDate = new Date();
@@ -223,32 +277,29 @@ const DatePicker = ({ minDate, maxDate }) => {
           <div className="sevenColGrid" onClick={handleSelectedDate}>
             {range(1, getNumberDaysInMonth(currentYear, currentMonth) + 1).map(
               (day) => (
-                
+
                 <p
                   key={day}
                   id="day"
                   data-day={day}
                   className={`
-                  ${
-                    selectedDate?.getTime() ===
-                    new Date(currentYear, currentMonth, day).getTime()
+                  ${selectedDate?.getTime() ===
+                      new Date(currentYear, currentMonth, day).getTime()
                       ? "active"
                       : ""
-                  } 
-                  ${
-                    day === new Date().getDate()
+                    } 
+                  ${day === new Date().getDate()
                       ? currentMonth === new Date().getMonth()
                         ? "current-date"
                         : ""
                       : ""
-                  }
-                  ${
-                    isPastDate(currentYear, currentMonth, day)
+                    }
+                  ${isPastDate(currentYear, currentMonth, day)
                       ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
                       : ""
-                  }`}
-                
-                  
+                    }`}
+
+
                 >
                   {day}
                 </p>
@@ -284,22 +335,21 @@ const DatePicker = ({ minDate, maxDate }) => {
             <CiCircleInfo className="icon-teacher-serach" />
           </div>
           <div className="table-teacher">
-          {attendanceData.staffArray.map((staff) => (
-            <div key={staff.staffid} className="single-card">
-              <div className="card-namings">
-                <p>{staff.name}</p> 
-                <p>{staff.staffid}</p>
+            {attendanceData.staffArray.map((staff) => (
+              <div key={staff.staffid} className="single-card">
+                <div className="card-namings">
+                  <p>{staff.name}</p>
+                  <p>{staff.staffid}</p>
+                </div>
+                <div className={`attendance-button ${staff.isPresent ? "" : "color-red"}  ${isPastMonth(currentYear, currentMonth)
+                    ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
+                    : ""
+                  } `} onClick={() => handleAction(staff.staffid)}>
+                  {staff.isPresent ? "Present" : "Absent"}
+                </div>
               </div>
-              <div className={`attendance-button ${staff.isPresent ? "" : "color-red"}  ${
-                isPastMonth(currentYear, currentMonth)
-                  ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
-                  : ""
-              } `} onClick={() => handleAction("toggle", staff.staffid)}>
-                {staff.isPresent ? "Present" : "Absent"}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
