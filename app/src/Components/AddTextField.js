@@ -10,7 +10,7 @@ const AddTextField = ({ label,value, onChange }) => {
             {label}
           </label>
           <input
-            type="text"
+            type="Number"
             value={value}
             onChange={onChange}
             placeholder="Enter Amount"

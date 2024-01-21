@@ -27,7 +27,6 @@
   width: 100%;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
 }
 .form-first label {
   width: 200px;
@@ -49,7 +48,7 @@
   gap: 40px;
 }
 .components-name div {
-  padding: 5px 7px;
+  padding: 2px 25px;
   background-color: #333333;
   color: white;
   border-radius: 5px;
@@ -118,7 +117,6 @@
 }
 .component-card-two {
   flex-direction: column !important;
-  align-items: self-start !important;
   gap: 20px;
 }
 .checkbox-container-exam {
@@ -173,4 +171,7 @@
 .remove-button{
   font-size: 18px;
   border-radius: 50%;
+}
+.applicable-classes{
+  width: 600px;
 }

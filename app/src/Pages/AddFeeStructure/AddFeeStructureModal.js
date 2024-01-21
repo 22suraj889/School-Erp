@@ -37,47 +37,68 @@ const AddOrUpdateFeeSlab = ({
   const [feeStructureData, setFeeStructureData] = useState({});
   const [feeSlabs, setFeeSlabs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [totalFees, setTotalFees] = useState(0);
+  const [totalValuesList, setTotalValuesList] = useState([]);
+
   useEffect(() => {
     if (isModalOpen && isUpdateOn) {
       getFeeSlabData(DocId);
-
     }
   }, [isModalOpen, isUpdateOn]);
 
   const getFeeSlabData = async (DocId) => {
-
     try {
       setIsLoading(true);
       const feeStruct = await getSpecificFeeStructure(DocId);
       console.log(feeStruct);
       setApppicaiontFee(feeStruct?.applicationFee);
-      
+
       const neweStruct = transformDataToArray(feeStruct);
       console.log(neweStruct);
-    
+
       const feeSlabs = await slabarrayfromactualdb(DocId);
-      
+
       // Map feeSlabs with data from neweStruct or set initialData if not present
       const updatedFeeSlabArray = feeSlabs.map((slabName) => ({
         slabName,
-        data: neweStruct.find(item => item.slabName === slabName)?.data || { ...initialData }
+        data: neweStruct.find((item) => item.slabName === slabName)?.data || {
+          ...initialData,
+        },
       }));
-    
+
       setFeeSlabArray(updatedFeeSlabArray);
       console.log(updatedFeeSlabArray);
+      // Map through updatedFeeSlabArray
+      updatedFeeSlabArray.forEach((slab) => {
+        let totalValues = 0; // Initialize as a number for each slab
+
+        slab.data.applicableFees.forEach((fee) => {
+          Object.values(fee).forEach((value) => {
+            const parsedValue = parseInt(value, 10);
+            if (!isNaN(parsedValue)) {
+              totalValues += parsedValue;
+            }
+          });
+        });
+        setTotalValuesList((prevList) => [...prevList, totalValues]);
+        console.log(totalValuesList)
+      });
     } catch (error) {
       console.error("Error fetching feeStruct data", error);
     } finally {
       setIsLoading(false);
     }
-    
   };
 
   const transformDataToArray = (originalData) => {
     const transformedData = [];
 
     for (const slabName in originalData) {
-      if (slabName !== 'className' && slabName !== 'applicationFee' && slabName !== 'createdAt') {
+      if (
+        slabName !== "className" &&
+        slabName !== "applicationFee" &&
+        slabName !== "createdAt"
+      ) {
         const slabData = originalData[slabName];
         const slabObject = {
           slabName: slabName,
@@ -86,7 +107,11 @@ const AddOrUpdateFeeSlab = ({
           },
         };
 
-        if (slabData && typeof slabData === 'object' && Object.keys(slabData).length > 0) {
+        if (
+          slabData &&
+          typeof slabData === "object" &&
+          Object.keys(slabData).length > 0
+        ) {
           for (const key in slabData) {
             slabObject.data.applicableFees.push({
               [key]: slabData[key],
@@ -99,11 +124,10 @@ const AddOrUpdateFeeSlab = ({
     }
 
     return transformedData;
-  }
+  };
 
-
-
-  const handleInputChange = (e, index, classIndex) => {
+  const handleInputChange = (e, index, classIndex, value) => {
+    console.log(value);
     const updatedArray = [...feeSlabArray];
     const firstKey = Object.keys(
       feeSlabArray[index].data.applicableFees[classIndex]
@@ -154,23 +178,19 @@ const AddOrUpdateFeeSlab = ({
       const response = await addFeeStructure(feeStructureData);
 
       if (response.status) {
-      setApppicaiontFee(0);
-      setIsModalOpen(false);
-      handleFeeSlabAdded();
-      toast.success(response.message);
+        setApppicaiontFee(0);
+        setIsModalOpen(false);
+        handleFeeSlabAdded();
+        toast.success(response.message);
       }
       if (!response.status) {
         setApppicaiontFee(0);
         setIsModalOpen(false);
         toast.error(response.message);
       }
-
     } catch (error) {
       console.error("Error updating feeStruct data", error);
     }
-
-  
-  
   };
 
   if (!isModalOpen) return null;
@@ -190,7 +210,7 @@ const AddOrUpdateFeeSlab = ({
           strokeWidth={2}
           strokeWidthSecondary={2}
         />
-      ) :
+      ) : (
         <>
           <h2 className="text-[20px] font-bold text-left bg-[#333333] text-white addTeacher-header">
             {isUpdateOn ? "Add Fee Structure" : "Add Fee Structure"}
@@ -223,43 +243,67 @@ const AddOrUpdateFeeSlab = ({
                         setActiveCom(index + 1);
                         setTrackActiveCom(index + 1);
                       }}
-                      className={activeCom === index + 1 ? "active-component" : ""}
+                      className={
+                        activeCom === index + 1 ? "active-component" : ""
+                      }
                     >
                       {slab.slabName}
                     </div>
                   ))}
                 </div>
                 {feeSlabArray.map((slab, index2) => (
-                  <div
-                    key={index2}
-                    className={
-                      activeCom === index2 + 1
-                        ? "component-card component-card-two"
-                        : "hidden-card"
-                    }
-                  >
-                    {activeCom === index2 + 1 && (
-                      <div className="applicable-classes">
-                        <ul>
-                          {slab.data.applicableFees.map((classObj, classIndex) => (
-                            <li key={classIndex}>
-                              <AddTextField
-                                label={Object.keys(classObj)[0]}
-                                value={Object.values(classObj)[0]}
-                                onChange={(e) => {
-                                  handleInputChange(e, index2, classIndex);
-                                }}
-                              />
-                            </li>
-                          ))}
-                        </ul>
+                  <>
+                    <div
+                      key={index2}
+                      className={
+                        activeCom === index2 + 1
+                          ? "component-card component-card-two"
+                          : "hidden-card"
+                      }
+                    >
+                      <div className="flex gap-[50px] items-center">
+                        <label className="block text-[18px] font-medium text-[#333333]">
+                        {`${slab.slabName} Total`}
+                        </label>
+                        <input
+                          type="Number"
+                          name="totalFees"
+                          value={totalValuesList[index2]}
+                          readOnly
+                          required
+                          className="mt-1 p-2 block w-half border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
                       </div>
-                    )}
-                    <AddButton
-                      buttonText={"Add a Slab"}
-                      onClickButton={() => setIsModalOpen2(true)}
-                    />
-                  </div>
+                      {activeCom === index2 + 1 && (
+                        <div className="applicable-classes">
+                          <ul>
+                            {slab.data.applicableFees.map(
+                              (classObj, classIndex) => (
+                                <li key={classIndex}>
+                                  <AddTextField
+                                    label={Object.keys(classObj)[0]}
+                                    value={Object.values(classObj)[0]}
+                                    onChange={(e) => {
+                                      handleInputChange(
+                                        e,
+                                        index2,
+                                        classIndex,
+                                        Object.values(classObj)[0]
+                                      );
+                                    }}
+                                  />
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                      <AddButton
+                        buttonText={"Add a Slab"}
+                        onClickButton={() => setIsModalOpen2(true)}
+                      />
+                    </div>
+                  </>
                 ))}
               </div>
               <div className="add-feeStruct-btn addTeacher-buttons">
@@ -304,7 +348,7 @@ const AddOrUpdateFeeSlab = ({
             onAddSlab={handleAddSlab}
           />
         </>
-      }
+      )}
     </Modal>
   );
 };
