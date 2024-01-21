@@ -6,7 +6,8 @@ import "./SearchDetails.css";
 import download from "./download.png";
 import Add from "./9.png";
 import Remove from "./remove.png";
-import ButtonComponent from "../../Components/ButtonComponent";
+import AddOrUpdateStudentForm from "../AddStudentsDirectly/AddOrUpdateStudentForm ";
+import AddOrUpdateTeacherForm from "../AddTeacher/AddOrUpdateTeacherForm";
 
 const SearchDetailsShow = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -44,6 +45,7 @@ const SearchDetailsShow = () => {
   const who = location.state?.who || " ";
   const [isChecked1, setIsChecked1] = useState(false);
   const [isChecked2, setIsChecked2] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getRandomDate = () => {
     const start = new Date(2000, 0, 1); // Choose your start date
@@ -68,15 +70,42 @@ const SearchDetailsShow = () => {
     setIsChecked2(!isChecked2);
   };
 
+  const handleViewAction = () => {
+    if (who == 'teacher') {
+      setIsModalOpen(true);
+      console.log(who, id);
+
+    }
+    else {
+      console.log(who, id);
+      setIsModalOpen(true);
+    }
+
+  }
+
+  const handleStudentUpdated = () => {
+    setIsModalOpen(false);
+    console.log(" document updated with ID:");
+  };
+  const handleTeacherUpdated = () => {
+    setIsModalOpen(false);
+    console.log(" document updated with ID:");
+  };
+
   console.log(resultData);
 
   return (
     <div>
       {resultData && (
         <div>
+       
           <div className="search-wrapper-details">
             <div className="view-edit-div">
-              <div><ButtonComponent buttonText={"View/Edit Full Data"} onClickButton={() => {console.log(who, id)}} isUpdateDisabled={false} /></div>
+              <div>
+                <button type="button" className="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded"
+                  onClick={handleViewAction} > View/Edit Full Data
+                </button>
+              </div>
               <div className="search-container-details">
                 <div className="search-wrapper">
                   <TextNameComponent
@@ -149,6 +178,13 @@ const SearchDetailsShow = () => {
           </div>
           {who === "student" && (
             <div>
+              <AddOrUpdateStudentForm
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                handleStudentUpdated={handleStudentUpdated}
+                DocId={id}
+                isUpdateOn={true}
+              />
               <div className="Fees">
                 <div>
                   <div className="fees-section">
@@ -318,6 +354,13 @@ const SearchDetailsShow = () => {
           )}
           {who !== "student" && (
             <div className="ml-7">
+              <AddOrUpdateTeacherForm
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                handleTeacherUpdated={handleTeacherUpdated}
+                DocId={id}
+                isUpdateOn={true}
+              />
               <div className="flex justify-between">
                 <div className="Classes w-1/3">
                   <div className="Part-1 flex">
@@ -441,16 +484,14 @@ function Dates({ days, currentMonth }) {
         return (
           <div
             key={date}
-            className={`col-span-1 p-1 text-center ${
-              !isCurrentMonth ? "text-gray-400" : ""
-            }`}
+            className={`col-span-1 p-1 text-center ${!isCurrentMonth ? "text-gray-400" : ""
+              }`}
           >
             <p
-              className={`${
-                day.toDateString() === new Date().toDateString()
-                  ? "text-blue-500"
-                  : ""
-              }`}
+              className={`${day.toDateString() === new Date().toDateString()
+                ? "text-blue-500"
+                : ""
+                }`}
             >
               {date}
             </p>

@@ -14,7 +14,7 @@ const AddNoticePage = () => {
 
   const openModal = () => {
     console.log("Open modal");
-    // setIsModalOpen(true);
+    setIsModalOpen(true);
   };
 
   const handleNoticeAdded = () => {

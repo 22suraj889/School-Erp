@@ -80,6 +80,37 @@ export const deleteHoliday = async (subjectId) => {
     }
 };
 
+//fetching all Holidays Dates
+export const getHolidaysDates = async () => {
+    const HolidayRef = collection(db, "AddHolidayAndEvents");
+  
+    try {
+      const q = query(HolidayRef, orderBy("createdAt", "asc"));
+      const querySnapshot = await getDocs(q);
+  
+      const datesArray = [];
+  
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+  
+        if (data.isHoliday === "yes") {
+          const startDate = new Date(data.startDate);
+          const endDate = new Date(data.endDate);
+  
+          for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+            const formattedDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+            datesArray.push(formattedDate);
+          }
+        }
+      });
+  
+      return datesArray;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  
 
 
   

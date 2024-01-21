@@ -57,7 +57,7 @@ const App = () => {
     return () => {
       window.removeEventListener("popstate", handleUrlChange);
     };
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <UserProvider>
