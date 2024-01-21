@@ -1,10 +1,16 @@
 /* Search at the top */
+.view-edit-div{
+  display: flex;
+  flex-direction: column;
+  background-color: color;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  padding: 30px 50px;
+  gap: 30px;
+  align-items: flex-end;
+}
 .search-container-details {
   display: flex;
   width: auto;
-  background-color: #ffffff;
-  padding: 30px 50px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 5px;
   gap: 50px;
 }

@@ -7,11 +7,11 @@ import "./DynamicTable.css";
 import debounce from "lodash/debounce";
 import {
   getAttendanceList,
+  searchStaff,
   storeStaffAttendance,
 } from "../api/StaffAttendance/StaffAttendance";
 import { toast } from "react-toastify";
 import "./Sidebar.css"
-import { searchUser } from "../api/TeacherMaster/AddTeacher";
 
 const DatePicker = ({ minDate, maxDate }) => {
   const monthNames = [
@@ -63,7 +63,7 @@ const DatePicker = ({ minDate, maxDate }) => {
 
 
   const debouncedSearch = debounce(async (term) => {
-    const result = await searchUser(term);
+    const result = await searchStaff(term);
     console.log(result)
     // const trimmedTerm = term.trim();
     // const lowercaseTerm = trimmedTerm.toLowerCase();

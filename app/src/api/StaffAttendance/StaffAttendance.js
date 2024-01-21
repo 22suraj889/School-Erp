@@ -306,7 +306,7 @@ export const calculateAttendancePercentage = async (options) => {
       const students = staffSnapshot.docs.map((doc) => ({
         id: doc.id,
         firstName: doc.data().firstName,
-        studentId: doc.data().studentId,
+        staffId: doc.data().staffId,
       }));
   
       // Fetch all teacher names and IDs
@@ -330,10 +330,11 @@ export const calculateAttendancePercentage = async (options) => {
   
       // Combine and return the results
       const searchResults = {
-        students: filteredStudents,
+        staff: filteredStudents,
         teachers: filteredTeachers,
       };
   
+      console.log(searchResults)
       return searchResults;
     } catch (error) {
       console.error("Error searching users:", error);

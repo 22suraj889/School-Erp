@@ -3,6 +3,7 @@ import Modal from "../../Components/Modal";
 import Alert from "@mui/material/Alert";
 import "../AddTeacher/AddTeacherForm.css";
 import { addNoticeToDatabase } from "../../api/AddNotice/AddNotice";
+import { getAllSectionsByClassName, getAllclassNames } from "../../api/ClassMaster/AddClassAndSection";
 
 const ClassRankList = ({ isModalOpen, setIsModalOpen }) => {
   const inticalData = {
@@ -10,17 +11,26 @@ const ClassRankList = ({ isModalOpen, setIsModalOpen }) => {
     noticeDescription: "",
   };
   const [noticeData, setNoticeData] = useState(inticalData);
-
+  const [allClassesName, setAllClassesName] = useState(null);
+  const [className, setClassName] = useState("");
+  const [sectionName, setSectionName] = useState("");
+  const [allSectionWithclass, setAllSectionWithClass] = useState(null);
   const [error, setError] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    setNoticeData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setClassName(value)
+    console.log(className)
+  };
+  const getAllClasses = async () => {
+    const data = await getAllclassNames();
+    setAllClassesName(data);
+    console.log(className)
+    if (className !== "") {
+      const sectionData = await getAllSectionsByClassName(className);
+      setAllSectionWithClass(sectionData);
+    }
   };
   const handleAdd = async () => {
     try {
@@ -40,6 +50,10 @@ const ClassRankList = ({ isModalOpen, setIsModalOpen }) => {
       handleNoticeAdded();
     }, 2000); // Hide the message after 2 seconds
   };
+  
+  useEffect(() => {
+    getAllClasses();
+  }, [allClassesName]);
 
   if (!isModalOpen) return null;
 
@@ -52,7 +66,7 @@ const ClassRankList = ({ isModalOpen, setIsModalOpen }) => {
       )}
 
       <h2 className="text-[20px] font-bold text-left bg-[#333333] text-white addTeacher-header">
-        {"Update Expense"}
+        {"Exam Ranklist"}
       </h2>
       <div className="addTeacher-form">
         <form>
@@ -62,17 +76,17 @@ const ClassRankList = ({ isModalOpen, setIsModalOpen }) => {
                 Class*
               </label>
               <select
-                type="text"
-                name="noticeTo"
-                value={noticeData.noticeTo}
+                name="class"
+                value={className}
                 onChange={handleInputChange}
                 className="mt-1 p-2 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
-                <option value="">--- Select ---</option>
-                <option value="Pysics">Pysics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Biology">Biology</option>
-                <option value="Maths">Maths</option>
+                <option value="">Select Class</option>
+                {allClassesName?.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="form-first">
@@ -81,16 +95,17 @@ const ClassRankList = ({ isModalOpen, setIsModalOpen }) => {
               </label>
               <select
                 type="text"
-                name="noticeTo"
-                value={noticeData.noticeTo}
-                onChange={handleInputChange}
+                name="section"
+                value={sectionName}
+                onChange={(e) => setSectionName(e.target.value)}
                 className="mt-1 p-2 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
-                <option value="">--- Select ---</option>
-                <option value="Pysics">Pysics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Biology">Biology</option>
-                <option value="Maths">Maths</option>
+                <option value="">Select Section</option>
+                {allSectionWithclass?.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="form-first">
