@@ -40,7 +40,13 @@ div a {
 }
 
 .pastDate {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: not-allowed !important;
 }
-
+/* Inside your CSS file */
+.holiday {
+  background-color: red;
+  border-radius: 50%;
+  color: white; /* Optionally, you can set text color to white for better visibility */
+  padding: 5px; /* Adjust padding as needed */
+}

@@ -3,10 +3,14 @@ import { Oval } from "react-loader-spinner";
 import { CiSearch } from "react-icons/ci";
 import { CiCircleInfo } from "react-icons/ci";
 import debounce from "lodash/debounce";
-import { getAttendanceList, storeStaffAttendance } from "../api/StaffAttendance/StaffAttendance";
+import {
+  getAttendanceList,
+  storeStaffAttendance,
+} from "../api/StaffAttendance/StaffAttendance";
 import { toast } from "react-toastify";
 import "./DynamicTable.css";
 import "./Sidebar.css";
+import { getHolidaysDates } from "../api/AddHoliday/AddHoliday";
 
 const DatePicker = ({ minDate, maxDate }) => {
   const monthNames = [
@@ -56,25 +60,31 @@ const DatePicker = ({ minDate, maxDate }) => {
   const [attendanceData, setAttendanceData] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [searchList, setSearchList] = useState([]);
+  const [holidays, setHolidays] = useState([]);
+
+  const getHolidays = async () => {
+    const holidaysDates = await getHolidaysDates();
+    setHolidays(holidaysDates);
+    console.log(holidaysDates);
+    console.log(holidays);
+  };
 
   const handleSearch = (event) => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
 
-    // Filter the staff array based on the search term
     const filteredStaffArray = searchList.staffArray.filter(
       (staff) =>
         staff.name.toLowerCase().includes(term) ||
         staff.staffid.toLowerCase().includes(term)
     );
 
-    // Update the state with the filtered staff array
     setAttendanceData((prevState) => ({
       ...prevState,
       staffArray: filteredStaffArray,
     }));
-    console.log(attendanceData)
-    console.log(attendanceList)
+    console.log(attendanceData);
+    console.log(attendanceList);
   };
 
   const formatToYYYYMMDD = (date) => {
@@ -111,6 +121,7 @@ const DatePicker = ({ minDate, maxDate }) => {
 
   useEffect(() => {
     fetchAttendanceList(selectedDate);
+    getHolidays();
   }, [selectedDate]);
 
   const nextMonth = () => {
@@ -132,11 +143,21 @@ const DatePicker = ({ minDate, maxDate }) => {
   };
 
   const handleSelectedDate = async (event) => {
-    if (!isPastDate(currentYear, currentMonth, event.target.getAttribute("data-day"))) {
+    if (
+      !isPastDate(
+        currentYear,
+        currentMonth,
+        event.target.getAttribute("data-day")
+      )
+    ) {
       setIsButtonDisabled(true);
       if (event.target.id === "day") {
         const selectedDay = event.target.getAttribute("data-day");
-        const newSelectedDate = new Date(currentYear, currentMonth, selectedDay);
+        const newSelectedDate = new Date(
+          currentYear,
+          currentMonth,
+          selectedDay
+        );
 
         setSelectedDate(newSelectedDate);
         setIsLoading(true);
@@ -153,13 +174,12 @@ const DatePicker = ({ minDate, maxDate }) => {
     if (!isPastMonth(currentYear, currentMonth)) {
       setIsButtonDisabled(false);
 
-      // Update the local state first
       setAttendanceData((attendanceData) => {
         const updatedStaffArray = attendanceData.staffArray.map((staff) => {
           if (staff.staffid === staffId) {
             return {
               ...staff,
-              isPresent: !staff.isPresent, // Toggle the isPresent value
+              isPresent: !staff.isPresent,
             };
           }
           return staff;
@@ -171,7 +191,6 @@ const DatePicker = ({ minDate, maxDate }) => {
         };
       });
 
-      // Then make the API call to update the backend
       await handleSaveAttendance(staffId);
     }
   };
@@ -190,10 +209,8 @@ const DatePicker = ({ minDate, maxDate }) => {
 
         const response = await storeStaffAttendance(selectedStaffData);
         console.log("API response:", response.message);
-        // Optionally handle success or inform the user
       } catch (error) {
         console.error("Error saving attendance:", error);
-        // Handle error or inform the user
       }
     }
   };
@@ -207,7 +224,11 @@ const DatePicker = ({ minDate, maxDate }) => {
 
   const isPastMonth = (year, month) => {
     const currentDate = new Date();
-    const firstDayOfCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const firstDayOfCurrentMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
     const firstDayOfSelectedMonth = new Date(year, month, 1);
 
     return firstDayOfCurrentMonth > firstDayOfSelectedMonth;
@@ -251,22 +272,38 @@ const DatePicker = ({ minDate, maxDate }) => {
                   key={day}
                   id="day"
                   data-day={day}
-                  className={`
-                  ${selectedDate?.getTime() ===
-                      new Date(currentYear, currentMonth, day).getTime()
+                  className={`${
+                    selectedDate?.getTime() ===
+                    new Date(currentYear, currentMonth, day).getTime()
                       ? "active"
                       : ""
-                    } 
-                  ${day === new Date().getDate()
+                  } 
+                  ${
+                    day === new Date().getDate()
                       ? currentMonth === new Date().getMonth()
                         ? "current-date"
                         : ""
                       : ""
-                    }
-                  ${isPastDate(currentYear, currentMonth, day)
-                      ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
+                  }
+                  ${
+                    isPastDate(currentYear, currentMonth, day)
+                      ? "pastDate"
                       : ""
-                    }`}
+                  }
+                  ${
+                    holidays.includes(
+                      formatToYYYYMMDD(new Date(currentYear, currentMonth, day))
+                    )
+                      ? "holiday"
+                      : ""
+                  }`}
+                  style={{
+                    color: holidays.includes(
+                      formatToYYYYMMDD(new Date(currentYear, currentMonth, day))
+                    )
+                      ? "red"
+                      : "",
+                  }}
                 >
                   {day}
                 </p>
@@ -310,10 +347,16 @@ const DatePicker = ({ minDate, maxDate }) => {
                   <p>{staff.name}</p>
                   <p>{staff.staffid}</p>
                 </div>
-                <div className={`attendance-button ${staff.isPresent ? "" : "color-red"}  ${isPastMonth(currentYear, currentMonth)
-                    ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
-                    : ""
-                  } `} onClick={() => handleAction(staff.staffid)}>
+                <div
+                  className={`attendance-button ${
+                    staff.isPresent ? "" : "color-red"
+                  }  ${
+                    isPastMonth(currentYear, currentMonth)
+                      ? "pastDate"
+                      : ""
+                  } `}
+                  onClick={() => handleAction(staff.staffid)}
+                >
                   {staff.isPresent ? "Present" : "Absent"}
                 </div>
               </div>

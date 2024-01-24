@@ -98,11 +98,13 @@ export const getHolidaysDates = async () => {
           const endDate = new Date(data.endDate);
   
           for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
-            const formattedDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+            const formattedDate = `${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}`;
             datesArray.push(formattedDate);
           }
         }
       });
+
+      console.log(datesArray);
   
       return datesArray;
     } catch (error) {
