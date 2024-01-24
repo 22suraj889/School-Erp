@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Oval } from "react-loader-spinner"; // Assuming you are using the Oval component for loading
-import "../Pages/PutAttendance/PutAttendancs.css";
+import { Oval } from "react-loader-spinner";
 import { CiSearch } from "react-icons/ci";
 import { CiCircleInfo } from "react-icons/ci";
-import "./DynamicTable.css";
 import debounce from "lodash/debounce";
-import {
-  getAttendanceList,
-  searchStaff,
-  storeStaffAttendance,
-} from "../api/StaffAttendance/StaffAttendance";
+import { getAttendanceList, storeStaffAttendance } from "../api/StaffAttendance/StaffAttendance";
 import { toast } from "react-toastify";
-import "./Sidebar.css"
+import "./DynamicTable.css";
+import "./Sidebar.css";
 
 const DatePicker = ({ minDate, maxDate }) => {
   const monthNames = [
@@ -60,35 +55,27 @@ const DatePicker = ({ minDate, maxDate }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [attendanceData, setAttendanceData] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-
-
-  const debouncedSearch = debounce(async (term) => {
-    const result = await searchStaff(term);
-    console.log(result)
-    // const trimmedTerm = term.trim();
-    // const lowercaseTerm = trimmedTerm.toLowerCase();
-    // const results = await searchUser(lowercaseTerm);
-    // setShow(true);
-    // setAttendanceData(results);
-    // try {
-    //   const trimmedTerm = term.trim();
-    //   if (trimmedTerm.length >= 2) {
-    //     const lowercaseTerm = trimmedTerm.toLowerCase();
-    //     const results = await searchUser(lowercaseTerm);
-    //     setShow(true);
-    //     setAttendanceData(results);
-    //   }
-    // } catch (error) {
-    //   console.error("Error:", error);
-    //   toast.error("Error Searching data");
-    // }
-  }, 100);
+  const [searchList, setSearchList] = useState([]);
 
   const handleSearch = (event) => {
-    const term = event.target.value;
+    const term = event.target.value.toLowerCase();
     setSearchTerm(term);
-    debouncedSearch(term);
-  }
+
+    // Filter the staff array based on the search term
+    const filteredStaffArray = searchList.staffArray.filter(
+      (staff) =>
+        staff.name.toLowerCase().includes(term) ||
+        staff.staffid.toLowerCase().includes(term)
+    );
+
+    // Update the state with the filtered staff array
+    setAttendanceData((prevState) => ({
+      ...prevState,
+      staffArray: filteredStaffArray,
+    }));
+    console.log(attendanceData)
+    console.log(attendanceList)
+  };
 
   const formatToYYYYMMDD = (date) => {
     const year = date.getFullYear();
@@ -103,7 +90,6 @@ const DatePicker = ({ minDate, maxDate }) => {
     try {
       const attlist = await getAttendanceList(formattedDate);
       setAttendanceList(attlist);
-      console.log(attlist);
 
       const transformedData = {
         staffArray: attlist.map((entry) => ({
@@ -114,8 +100,7 @@ const DatePicker = ({ minDate, maxDate }) => {
         date: formattedDate,
       };
       setAttendanceData(transformedData);
-      console.log(attendanceList);
-      console.log(attendanceData);
+      setSearchList(attendanceData);
     } catch (error) {
       console.error("Error fetching attendance list:", error);
       toast.error("Error fetching data");
@@ -164,41 +149,6 @@ const DatePicker = ({ minDate, maxDate }) => {
     return new Date(currentYear, currentMonth, _day).getTime();
   };
 
-  // const handleAction = async (actionType, staffId) => {
-  //   if(!isPastMonth(currentYear, currentMonth)){
-  //   setIsButtonDisabled(false);
-  //     setAttendanceData( async (attendanceData) =>  {
-  //       const updatedStaffArray = attendanceData.staffArray.map((staff) => {
-  //         if (staff.staffid === staffId) {
-  //           return {
-  //             ...staff,
-  //             isPresent: !staff.isPresent, // Toggle the isPresent value
-  //           };
-  //         }
-  //         return staff;
-  //       });
-
-  //       const updatedAttendanceList = attendanceList?.map((entry) => {
-  //         if (entry.EmpId === staffId) {
-  //           return {
-  //             ...entry,
-  //             Status: !entry.Status,
-  //           };
-  //         }
-  //         return entry;
-  //       });
-
-
-  //       setAttendanceList(updatedAttendanceList);
-  //       await handleSaveAttendence()
-  //       return {
-  //         ...attendanceData,
-  //         staffArray: updatedStaffArray,
-  //       };
-  //     });
-  //   }
-  // };
-
   const handleAction = async (staffId) => {
     if (!isPastMonth(currentYear, currentMonth)) {
       setIsButtonDisabled(false);
@@ -227,22 +177,17 @@ const DatePicker = ({ minDate, maxDate }) => {
   };
 
   const handleSaveAttendance = async (selectedStaffId) => {
-    // Filter out only the selected staff member
     const selectedStaff = attendanceData.staffArray.find(
       (staff) => staff.staffid === selectedStaffId
     );
 
     if (selectedStaff) {
-      console.log("Selected staff data:", selectedStaff);
-
       try {
-        // Create a new object with only the selected staff
         const selectedStaffData = {
           staffArray: [selectedStaff],
           date: attendanceData.date,
         };
 
-        // Make the API call with the filtered data
         const response = await storeStaffAttendance(selectedStaffData);
         console.log("API response:", response.message);
         // Optionally handle success or inform the user
@@ -253,19 +198,13 @@ const DatePicker = ({ minDate, maxDate }) => {
     }
   };
 
-  // const handleSaveAttendence = async () => {
-
-  //   console.log("att",attendanceData)
-  //   const response = await storeStaffAttendance(attendanceData);
-  //   console.log(response.message);
-  // };
-
   const isPastDate = (year, month, day) => {
     const currentDate = new Date();
     const selectedDate = new Date(year, month, day);
 
     return currentDate < selectedDate;
   };
+
   const isPastMonth = (year, month) => {
     const currentDate = new Date();
     const firstDayOfCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -308,7 +247,6 @@ const DatePicker = ({ minDate, maxDate }) => {
           <div className="sevenColGrid" onClick={handleSelectedDate}>
             {range(1, getNumberDaysInMonth(currentYear, currentMonth) + 1).map(
               (day) => (
-
                 <p
                   key={day}
                   id="day"
@@ -329,8 +267,6 @@ const DatePicker = ({ minDate, maxDate }) => {
                       ? "pastDate"  // Set opacity 0.7 for dates from tomorrow
                       : ""
                     }`}
-
-
                 >
                   {day}
                 </p>
