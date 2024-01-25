@@ -59,7 +59,7 @@ const DatePicker = ({ minDate, maxDate }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [attendanceData, setAttendanceData] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchList, setSearchList] = useState([]);
+  const [searchList, setSearchList] = useState({ staffArray: [] });
   const [holidays, setHolidays] = useState([]);
 
   const getHolidays = async () => {
@@ -72,20 +72,22 @@ const DatePicker = ({ minDate, maxDate }) => {
   const handleSearch = (event) => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
-
-    const filteredStaffArray = searchList.staffArray.filter(
-      (staff) =>
-        staff.name.toLowerCase().includes(term) ||
-        staff.staffid.toLowerCase().includes(term)
-    );
-
-    setAttendanceData((prevState) => ({
-      ...prevState,
-      staffArray: filteredStaffArray,
-    }));
-    console.log(attendanceData);
-    console.log(attendanceList);
+    console.log(searchList)
+  
+    if (searchList && searchList.staffArray) {
+      const filteredStaffArray = searchList.staffArray.filter(
+        (staff) =>
+          staff.name.toLowerCase().includes(term) ||
+          staff.staffid.toLowerCase().includes(term)
+      );
+  
+      setAttendanceData((prevState) => ({
+        ...prevState,
+        staffArray: filteredStaffArray,
+      }));
+    }
   };
+  
 
   const formatToYYYYMMDD = (date) => {
     const year = date.getFullYear();
@@ -110,7 +112,7 @@ const DatePicker = ({ minDate, maxDate }) => {
         date: formattedDate,
       };
       setAttendanceData(transformedData);
-      setSearchList(attendanceData);
+      setSearchList(transformedData);
     } catch (error) {
       console.error("Error fetching attendance list:", error);
       toast.error("Error fetching data");
