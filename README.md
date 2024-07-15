@@ -2,6 +2,11 @@
 
 A desktop application for school management built with Electron, React, and Tailwind CSS.
 
+### For Login use credential
+
+- username ```admin```
+- password ```admin```
+
 ## Features
 
 - Manage student information
